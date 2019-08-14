@@ -2,7 +2,6 @@
 //		Init
 //////////////////////////////////////////////////////////////////////////////////
 // init renderer
-console.log(THREEx.ArToolkitContext.baseURL);
 var renderer	= new THREE.WebGLRenderer({
 	antialias: true,
 	alpha: true
@@ -27,14 +26,7 @@ scene.add(camera);
 //          handle arToolkitSource
 ////////////////////////////////////////////////////////////////////////////////
 var arToolkitSource = new THREEx.ArToolkitSource({
-	// to read from the webcam
 	sourceType : 'webcam',
-	// // to read from an image
-	// sourceType : 'image',
-	// sourceUrl : THREEx.ArToolkitContext.baseURL + '../data/images/img.jpg',
-	// to read from a video
-	// sourceType : 'video',
-	// sourceUrl : THREEx.ArToolkitContext.baseURL + '../data/videos/headtracking.mp4',
 })
 arToolkitSource.init(function onReady(){
 	onResize()
@@ -77,8 +69,6 @@ onRenderFcts.push(function(){
 var markerControls = new THREEx.ArMarkerControls(arToolkitContext, camera, {
 	type : 'pattern',
 	patternUrl : THREEx.ArToolkitContext.baseURL + '../ar-web-test/ar-app/data/patt.hiro',
-	// patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.kanji',
-	// as we controls the camera, set changeMatrixMode: 'cameraTransformMatrix'
 	changeMatrixMode: 'cameraTransformMatrix'
 })
 // as we do changeMatrixMode: 'cameraTransformMatrix', start with invisible scene
