@@ -2,6 +2,7 @@
 //		Init
 //////////////////////////////////////////////////////////////////////////////////
 // init renderer
+console.log(THREEx.ArToolkitContext.baseURL);
 var renderer	= new THREE.WebGLRenderer({
 	antialias: true,
 	alpha: true
