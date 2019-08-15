@@ -26,7 +26,7 @@ scene.add( sphere );
 var fbxLoader = new THREE.FBXLoader();
 fbxLoader.crossOrigin = '*';
 
-fbxLoader.load('./../../models/Frog/Tree_frog.fbx', function( object ){
+fbxLoader.load('https://github.com/lichobaron/lichobaron.github.io/blob/master/ar-web-test/models/Zombie.FBX', function( object ){
     scene.add( object );
 });
 
