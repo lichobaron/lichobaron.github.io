@@ -1,6 +1,6 @@
 var scene = new THREE.Scene();
 var aspect = window.innerWidth / window.innerHeight;
-var camera = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 ); //apertura del lente, proporción, dist corta, dist larga
+var camera = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 );
 camera.position.z = 13;
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -14,7 +14,7 @@ var ambientLight = new THREE.AmbientLight( 0xa5a5a5, 1, 100 );
 ambientLight.position.set( 0, 0, 0 );
 scene.add(ambientLight);
 
-var geometrySphere = new THREE.SphereGeometry( 1, 32, 32 ); //radio, lin h, lin v
+var geometrySphere = new THREE.SphereGeometry( 1, 32, 32 );
 var materialSphere = new THREE.MeshPhongMaterial( {
     ambient: 0x050505, 
     specular: 0x555555, 
@@ -22,6 +22,13 @@ var materialSphere = new THREE.MeshPhongMaterial( {
 var sphere = new THREE.Mesh( geometrySphere, materialSphere );
 scene.add( sphere );
 
+
+var fbxLoader = new THREE.FBXLoader();
+fbxLoader.crossOrigin = '*';
+
+fbxLoader.load('./../../models/Frog/Tree_frog.fbx', function( object ){
+    scene.add( object );
+});
 
 function render() { 
     requestAnimationFrame(render); 
