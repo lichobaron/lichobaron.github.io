@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deadlocks en Java</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fafafa;
+      color: #222;
+      margin: 0;
+      padding: 40px;
+      line-height: 1.6;
+    }
+    h1 {
+      font-size: 2.2em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #111;
+    }
+    h2 {
+      font-size: 1.5em;
+      margin-top: 32px;
+      color: #333;
+    }
+    p {
+      margin: 10px 0;
+      max-width: 800px;
+    }
+    code {
+      background-color: #eee;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    pre {
+      background: #f3f3f3;
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 15px 0;
+    }
+    ul {
+      margin-left: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Deadlocks en Java</h1>
+
+  <section>
+    <h2>¿Qué es un Deadlock?</h2>
+    <p>
+      Un <strong>deadlock</strong> (o interbloqueo) ocurre cuando dos o más hilos se quedan 
+      esperando recursos que están bloqueados por los mismos hilos, 
+      impidiendo que cualquiera continúe su ejecución.
+    </p>
+
+    <p>Ejemplo clásico:</p>
+
+    <pre><code>class Recurso {}
+
+public class DeadlockEjemplo {
+  private final Recurso r1 = new Recurso();
+  private final Recurso r2 = new Recurso();
+
+  public void ejecutar() {
+    Thread t1 = new Thread(() -> {
+      synchronized (r1) {
+        System.out.println("Hilo 1 bloqueó r1");
+        try { Thread.sleep(100); } catch (InterruptedException e) {}
+        synchronized (r2) {
+          System.out.println("Hilo 1 bloqueó r2");
+        }
+      }
+    });
+
+    Thread t2 = new Thread(() -> {
+      synchronized (r2) {
+        System.out.println("Hilo 2 bloqueó r2");
+        try { Thread.sleep(100); } catch (InterruptedException e) {}
+        synchronized (r1) {
+          System.out.println("Hilo 2 bloqueó r1");
+        }
+      }
+    });
+
+    t1.start();
+    t2.start();
+  }
+
+  public static void main(String[] args) {
+    new DeadlockEjemplo().ejecutar();
+  }
+}</code></pre>
+
+    <p>
+      Ambos hilos se bloquean mutuamente:
+      <br>
+      - El hilo 1 tiene <code>r1</code> y espera <code>r2</code>.  
+      - El hilo 2 tiene <code>r2</code> y espera <code>r1</code>.  
+      Ninguno puede continuar.
+    </p>
+  </section>
+
+  <section>
+    <h2>Condiciones para que ocurra un Deadlock</h2>
+    <ul>
+      <li><strong>Exclusión mutua:</strong> Los recursos no pueden compartirse simultáneamente.</li>
+      <li><strong>Retención y espera:</strong> Un hilo mantiene un recurso mientras espera otro.</li>
+      <li><strong>No expropiación:</strong> Un recurso no puede forzarse a liberarse.</li>
+      <li><strong>Espera circular:</strong> Hay un ciclo de hilos esperando recursos entre sí.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Cómo prevenir los Deadlocks</h2>
+
+    <h3>1. Ordenar los bloqueos</h3>
+    <p>
+      Siempre adquirir los bloqueos en el mismo orden para evitar esperas circulares.
+    </p>
+    <pre><code>synchronized (r1) {
+  synchronized (r2) {
+    // Orden fijo evita el deadlock
+  }
+}</code></pre>
+
+    <h3>2. Usar <code>tryLock()</code> con timeout (ReentrantLock)</h3>
+    <p>
+      Permite intentar adquirir un lock con tiempo límite.  
+      Si no lo consigue, el hilo puede liberar recursos y reintentar.
+    </p>
+    <pre><code>Lock lock1 = new ReentrantLock();
+Lock lock2 = new ReentrantLock();
+
+if (lock1.tryLock(100, TimeUnit.MILLISECONDS)) {
+  try {
+    if (lock2.tryLock(100, TimeUnit.MILLISECONDS)) {
+      try {
+        // Trabajo seguro
+      } finally {
+        lock2.unlock();
+      }
+    }
+  } finally {
+    lock1.unlock();
+  }
+}</code></pre>
+
+    <h3>3. Evitar bloqueos anidados</h3>
+    <p>
+      Minimiza la cantidad de <code>synchronized</code> dentro de otros 
+      bloques sincronizados.
+    </p>
+
+    <h3>4. Reducir el tiempo de retención del lock</h3>
+    <p>
+      Libera los recursos lo antes posible; evita operaciones largas dentro de secciones críticas.
+    </p>
+  </section>
+
+  <section>
+    <h2>Cómo detectar un Deadlock</h2>
+    <ul>
+      <li>Usando herramientas como <code>jconsole</code>, <code>jvisualvm</code> o <code>jstack</code>.</li>
+      <li><code>jstack &lt;pid&gt;</code> muestra los hilos bloqueados y los objetos involucrados.</li>
+    </ul>
+
+    <pre><code>Found one Java-level deadlock:
+=============================
+"Hilo-1":
+  waiting to lock monitor 0x000000000f5a9c68 (object r2),
+  which is held by "Hilo-2"
+"Hilo-2":
+  waiting to lock monitor 0x000000000f5a9c78 (object r1),
+  which is held by "Hilo-1"</code></pre>
+  </section>
+
+  <section>
+    <h2>Buenas prácticas</h2>
+    <ul>
+      <li>Evitar bloqueos múltiples innecesarios.</li>
+      <li>Usar estructuras concurrentes de alto nivel (<code>ConcurrentHashMap</code>, <code>Semaphore</code>, <code>CountDownLatch</code>).</li>
+      <li>Diseñar las clases para que sean inmutables cuando sea posible.</li>
+      <li>Usar análisis estático o testing de concurrencia para detectar condiciones de carrera y deadlocks.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Palabras clave: <code>synchronized</code> y <code>volatile</code></h2>
+
+    <h3><code>synchronized</code></h3>
+    <p>
+      <code>synchronized</code> se usa para controlar el acceso a bloques de código o métodos que pueden ser ejecutados por múltiples hilos al mismo tiempo.  
+      Garantiza dos cosas:
+    </p>
+    <ul>
+      <li><strong>Exclusión mutua:</strong> Solo un hilo puede ejecutar el bloque sincronizado a la vez.</li>
+      <li><strong>Visibilidad:</strong> Los cambios realizados dentro del bloque sincronizado son visibles a otros hilos al liberar el lock.</li>
+    </ul>
+
+    <pre><code>public class Contador {
+  private int valor = 0;
+
+  public synchronized void incrementar() {
+    valor++;
+  }
+
+  public synchronized int obtener() {
+    return valor;
+  }
+}</code></pre>
+
+    <p>
+      Aquí, ambos métodos son atómicos y no pueden ejecutarse simultáneamente en el mismo objeto.
+    </p>
+
+    <h3><code>volatile</code></h3>
+    <p>
+      <code>volatile</code> se usa para variables compartidas entre hilos y garantiza la <strong>visibilidad</strong> de su valor.  
+      No evita condiciones de carrera, pero asegura que los hilos siempre lean el valor más reciente desde la memoria principal.
+    </p>
+
+    <pre><code>public class EjemploVolatile {
+  private volatile boolean activo = true;
+
+  public void ejecutar() {
+    new Thread(() -> {
+      while (activo) { /* ... */ }
+      System.out.println("Hilo terminado");
+    }).start();
+  }
+
+  public void detener() {
+    activo = false; // visible inmediatamente para otros hilos
+  }
+}</code></pre>
+
+    <p>
+      Sin <code>volatile</code>, el hilo podría leer una copia en caché y nunca detenerse.  
+      Con <code>volatile</code>, se garantiza que siempre lea el valor actualizado desde la memoria principal.
+    </p>
+  </section>
+
+</body>
+</html>

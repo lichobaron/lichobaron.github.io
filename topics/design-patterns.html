@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resumen: Patrones de Diseño (POO)</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;--card:#ffffff;--muted:#6b7280;--accent:#111827;--border:#e6e9ef;--radius:12px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--accent);-webkit-font-smoothing:antialiased;line-height:1.45;padding:28px;display:flex;justify-content:center;align-items:flex-start}
+    .container{width:100%;max-width:1100px;background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.95));border-radius:16px;border:1px solid var(--border);box-shadow:0 8px 30px rgba(17,24,39,0.06);padding:26px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+    h1{font-size:20px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:14px}
+    h2{margin-top:20px;font-size:18px;border-bottom:1px solid var(--border);padding-bottom:4px}
+    h3{font-size:15px;margin:8px 0 4px 0}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    @media (max-width:880px){.grid{grid-template-columns:1fr}body{padding:18px}}
+    .card{background:var(--card);border-radius:var(--radius);padding:16px;border:1px solid var(--border);min-height:110px}
+    .card p{margin:0;color:var(--muted);font-size:14px}
+    .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .tag{background:transparent;border:1px solid var(--border);padding:6px 10px;border-radius:999px;font-size:12px;color:var(--muted)}
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <main class="container" role="main">
+    <header>
+      <div>
+        <h1>Resumen: Patrones de Diseño en POO</h1>
+        <p class="lead">Patrones comunes agrupados por categoría, con cuándo usarlos y pros/cons.</p>
+      </div>
+      <div style="text-align:right;color:var(--muted);font-size:13px">Clásicos • Sobrio • Responsive</div>
+    </header>
+
+    <section>
+      <h2>Patrones Creacionales</h2>
+      <div class="grid">
+        <article class="card"><h3>Singleton</h3><p>Garantiza una única instancia de una clase y un punto global de acceso. Útil para recursos compartidos (configuración, logs). Evitar abuso: dificulta pruebas y genera acoplamiento global.</p></article>
+        <article class="card"><h3>Factory Method</h3><p>Define una interfaz para crear un objeto, pero deja que las subclases decidan qué clase instanciar. Favorece extensión sin modificar código cliente.</p></article>
+        <article class="card"><h3>Abstract Factory</h3><p>Proporciona una interfaz para crear familias de objetos relacionados sin especificar clases concretas. Útil para variantes de plataformas o temas.</p></article>
+        <article class="card"><h3>Builder</h3><p>Separa la construcción compleja de un objeto de su representación, permitiendo construir objetos paso a paso. Ideal para objetos con muchas configuraciones.</p></article>
+        <article class="card"><h3>Prototype</h3><p>Crea nuevos objetos clonando una instancia prototipo. Útil cuando la creación es costosa o se requiere duplicar estados complejos.</p></article>
+      </div>
+
+      <h2>Patrones Estructurales</h2>
+      <div class="grid">
+        <article class="card"><h3>Adapter</h3><p>Convierte la interfaz de una clase en otra que el cliente espera. Útil para integrar librerías o APIs incompatibles sin cambiar el código existente.</p></article>
+        <article class="card"><h3>Bridge</h3><p>Desacopla una abstracción de su implementación, de modo que ambas puedan variar independientemente. Bueno para plataformas cruzadas.</p></article>
+        <article class="card"><h3>Composite</h3><p>Compone objetos en estructuras de árbol para representar jerarquías parte-todo. Permite tratar objetos individuales y compuestos de la misma forma.</p></article>
+        <article class="card"><h3>Decorator</h3><p>Agrega responsabilidades adicionales a un objeto de forma dinámica. Alternativa flexible al uso de subclases para extender comportamiento.</p></article>
+        <article class="card"><h3>Facade</h3><p>Proporciona una interfaz unificada y simplificada a un conjunto de subsistemas. Reduce la complejidad para el cliente y mejora el acoplamiento.</p></article>
+        <article class="card"><h3>Flyweight</h3><p>Minimiza el uso de memoria compartiendo objetos que son iguales internamente. Útil cuando hay muchas instancias similares.</p></article>
+        <article class="card"><h3>Proxy</h3><p>Proporciona un sustituto o representante de otro objeto para controlar el acceso (lazy loading, seguridad, logging).</p></article>
+      </div>
+
+      <h2>Patrones Conductuales</h2>
+      <div class="grid">
+        <article class="card"><h3>Strategy</h3><p>Define una familia de algoritmos intercambiables y los encapsula para que sean intercambiables en tiempo de ejecución.</p></article>
+        <article class="card"><h3>Observer</h3><p>Define una dependencia uno-a-muchos entre objetos; cuando uno cambia, sus dependientes son notificados.</p></article>
+        <article class="card"><h3>Command</h3><p>Encapsula una petición como un objeto, permitiendo parametrizar clientes con operaciones, soportar undo/redo y colas de tareas.</p></article>
+        <article class="card"><h3>Iterator</h3><p>Proporciona una forma de acceder secuencialmente a los elementos de una colección sin exponer su representación interna.</p></article>
+        <article class="card"><h3>Mediator</h3><p>Define un objeto que encapsula la forma en que interactúan un conjunto de objetos, reduciendo las dependencias directas entre ellos.</p></article>
+        <article class="card"><h3>Memento</h3><p>Permite capturar y restaurar el estado interno de un objeto sin violar su encapsulación. Útil para snapshots y undo.</p></article>
+        <article class="card"><h3>State</h3><p>Permite a un objeto alterar su comportamiento cuando cambia su estado interno.</p></article>
+        <article class="card"><h3>Template Method</h3><p>Define el esqueleto de un algoritmo en una operación, delegando algunos pasos a subclases.</p></article>
+        <article class="card"><h3>Visitor</h3><p>Representa una operación a realizar sobre los elementos de una estructura de objetos. Permite agregar operaciones sin modificar las clases de los elementos.</p></article>
+        <article class="card"><h3>Chain of Responsibility</h3><p>Pasa una petición a lo largo de una cadena de objetos hasta que uno la maneja.</p></article>
+      </div>
+
+      <footer>
+        <strong>Consejos rápidos:</strong>
+        <ul style="margin:6px 0 0 18px;color:var(--muted)">
+          <li>Comprende el problema antes de aplicar un patrón.</li>
+          <li>Evita sobreingeniería: usa patrones donde aporten valor.</li>
+          <li>Prioriza claridad, mantenibilidad y testabilidad.</li>
+        </ul>
+      </footer>
+    </section>
+  </main>
+</body>
+</html>

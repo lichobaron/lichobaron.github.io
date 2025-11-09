@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Resumen: Arquitecturas de Software</title>
+  <style>
+    :root{
+      --bg: #f7f8fb;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --accent: #1f2937;
+      --border: #e6e9ef;
+      --radius: 12px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--accent);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.45;
+      padding:32px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+    }
+    .container{
+      width:100%;
+      max-width:1100px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.95));
+      border-radius:16px;
+      border:1px solid var(--border);
+      box-shadow:0 8px 30px rgba(31,41,55,0.06);
+      padding:28px;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
+    }
+    h1{font-size:20px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:14px}
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:18px;
+    }
+    @media (max-width:880px){
+      .grid{grid-template-columns:1fr}
+      body{padding:20px}
+    }
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:18px;
+      border:1px solid var(--border);
+      min-height:120px;
+    }
+    .card h3{margin:0 0 8px 0;font-size:16px}
+    .card p{margin:0;color:var(--muted);font-size:14px}
+    .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+    .tag{background:transparent;border:1px solid var(--border);padding:6px 10px;border-radius:999px;font-size:12px;color:var(--muted)}
+    footer{margin-top:20px;color:var(--muted);font-size:13px}
+    .intro{display:flex;gap:20px;align-items:flex-start}
+    .toc{min-width:220px}
+    .toc ul{margin:8px 0 0 0;padding:0;list-style:none}
+    .toc li{padding:6px 0;font-size:14px;color:var(--muted)}
+    .content{flex:1}
+    .section{margin-bottom:12px}
+    .section p{font-size:14px}
+  </style>
+</head>
+<body>
+  <main class="container" role="main">
+    <header>
+      <div>
+        <h1>Resumen: Arquitecturas de Software</h1>
+        <p class="lead">Breve guía de las arquitecturas más usadas, cuándo aplicarlas y ventajas/desventajas.</p>
+      </div>
+      <div style="text-align:right;color:var(--muted);font-size:13px">Sencillo • Sobrio • Responsive</div>
+    </header>
+
+    <section class="intro">
+      <nav class="toc card" aria-label="Índice">
+        <strong>Índice</strong>
+        <ul>
+          <li>Monolito</li>
+          <li>Capas (Layered)</li>
+          <li>Microservicios</li>
+          <li>Event-Driven</li>
+          <li>Serverless</li>
+          <li>Hexagonal (Ports & Adapters)</li>
+          <li>CQRS y Event Sourcing</li>
+          <li>SOA</li>
+          <li>Microkernel</li>
+          <li>Pipe & Filter</li>
+        </ul>
+      </nav>
+
+      <div class="content">
+        <div class="grid">
+
+          <article class="card section">
+            <h3>Monolito</h3>
+            <p>Aplicaciones empaquetadas y desplegadas como una sola unidad. Fácil de desarrollar y probar al inicio; sencillo despliegue. Con el crecimiento puede volverse difícil de escalar y mantener.</p>
+            <div class="tags"><span class="tag">Sencillez</span><span class="tag">Rápido MVP</span><span class="tag">Despliegue único</span></div>
+          </article>
+
+          <article class="card section">
+            <h3>Arquitectura por Capas (Layered / N-tier)</h3>
+            <p>Separa presentación, lógica de negocio y acceso a datos. Buena para claridad y roles definidos; facilita pruebas unitarias. Riesgo de acoplamiento entre capas y rendimiento en llamadas cruzadas.</p>
+            <div class="tags"><span class="tag">Separación de responsabilidades</span><span class="tag">Mantenibilidad</span></div>
+          </article>
+
+          <article class="card section">
+            <h3>Microservicios</h3>
+            <p>Conjunto de servicios pequeños, desacoplados y desplegables de forma independiente. Escalabilidad y autonomía de equipos. Sin embargo añade complejidad operativa, coordinación y diseño de APIs.</p>
+            <div class="tags"><span class="tag">Escalabilidad</span><span class="tag">DevOps</span><span class="tag">Independencia</span></div>
+          </article>
+
+          <article class="card section">
+            <h3>Event-Driven</h3>
+            <p>Sistemas basados en eventos y mensajes (pub/sub). Excelente para asincronía y sistemas reactivos. Dificultad en garantizar orden, consistencia y en el debugging distribuido.</p>
+            <div class="tags"><span class="tag">Asincronía</span><span class="tag">Flexibilidad</span></div>
+          </article>
+
+          <article class="card section">
+            <h3>Serverless</h3>
+            <p>Funciones o servicios administrados por el proveedor cloud (FaaS). Reduce la gestión de infraestructura y escala automáticamente. Puede generar cold starts, límites por proveedor y consideraciones de observabilidad.</p>
+            <div class="tags"><span class="tag">Pago por uso</span><span class="tag">Operación mínima</span></div>
+          </article>
+
+          <article class="card section">
+            <h3>Hexagonal / Ports &amp; Adapters</h3>
+            <p>Diseño centrado en el dominio con puertos (interfaces) y adaptadores para infra. Facilita pruebas y reemplazo de tecnologías externas sin afectar el núcleo de la aplicación.</p>
+            <div class="tags"><span class="tag">Pruebas</span><span class="tag">Independencia del framework</span></div>
+          </article>
+
+          <article class="card section">
+            <h3>CQRS (Command Query Responsibility Segregation) + Event Sourcing</h3>
+            <p>Separa lecturas y escrituras en modelos distintos; Event Sourcing persiste cambios como eventos. Adecuado para sistemas con alta complejidad de dominio y necesidad de auditoría. Añade complejidad y retos de consistencia.</p>
+            <div class="tags"><span class="tag">Auditoría</span><span class="tag">Escala de lectura</span></div>
+          </article>
+
+          <article class="card section">
+            <h3>SOA (Service-Oriented Architecture)</h3>
+            <p>Servicios empresariales que comparten contratos y un bus de mensajes (a menudo). Predecesor conceptual de microservicios; enfocado en integración entre dominios. Puede conllevar gobernanza y sobrecarga de middleware.</p>
+            <div class="tags"><span class="tag">Integración</span><span class="tag">Governance</span></div>
+          </article>
+
+          <article class="card section">
+            <h3>Microkernel (Plugin)</h3>
+            <p>Núcleo pequeño con funcionalidades extensibles via plugins. Útil para plataformas que necesitan personalización y extensibilidad (IDE, plataformas SaaS). Gestión de compatibilidad entre plugins puede complicarse.</p>
+            <div class="tags"><span class="tag">Extensible</span><span class="tag">Modular</span></div>
+          </article>
+
+          <article class="card section">
+            <h3>Pipe &amp; Filter</h3>
+            <p>Procesamiento por etapas encadenadas (filtros) conectadas por pipes; ideal para transformaciones de datos y streaming. Ventaja en reutilización de etapas; hay que controlar la latencia y el paralelismo.
+            </p>
+            <div class="tags"><span class="tag">Streaming</span><span class="tag">Canalización</span></div>
+          </article>
+
+        </div>
+
+        <footer>
+          <strong>Consejos rápidos:</strong>
+          <ul style="margin:6px 0 0 18px;color:var(--muted)">
+            <li>Comienza simple: usa monolito o capas para MVP.</li>
+            <li>Prefiere microservicios cuando necesites escalar equipos y despliegues independientes.</li>
+            <li>Event-driven y CQRS cuando la asincronía o la auditoría sean críticas.</li>
+            <li>Diseña para observabilidad y pruebas desde el inicio, independientemente de la arquitectura.</li>
+          </ul>
+        </footer>
+
+      </div>
+    </section>
+  </main>
+</body>
+</html>

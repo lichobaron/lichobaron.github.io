@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Conceptos Fundamentales de Ingeniería de Software</title>
+  <style>
+    :root{
+      --bg:#f7f8fa;--card:#ffffff;--border:#e6e9ef;--text:#1f2937;--muted:#6b7280;--accent:#111827;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);padding:28px;display:flex;justify-content:center}
+    main{width:100%;max-width:1100px;background:var(--card);border-radius:16px;border:1px solid var(--border);padding:28px;box-shadow:0 8px 30px rgba(0,0,0,0.05)}
+    header{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:20px}
+    h1{font-size:22px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:14px}
+    h2{margin-top:24px;font-size:18px;border-bottom:1px solid var(--border);padding-bottom:4px}
+    h3{font-size:15px;margin:10px 0 4px 0;color:var(--accent)}
+    p{margin:0 0 10px 0;line-height:1.6;font-size:14px;color:var(--text)}
+    ul{margin:0 0 10px 20px;color:var(--muted);font-size:14px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:10px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;min-height:100px}
+    footer{margin-top:30px;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Conceptos Fundamentales de Ingeniería de Software</h1>
+      <p class="lead">Resumen de principios y fundamentos que todo desarrollador debe dominar.</p>
+    </header>
+
+    <section>
+      <h2>Principios ACID</h2>
+      <div class="grid">
+        <article class="card"><h3>Atomicidad</h3><p>Una transacción se ejecuta completamente o no se ejecuta. No se permiten estados intermedios.</p></article>
+        <article class="card"><h3>Consistencia</h3><p>Garantiza que las reglas del sistema (restricciones, integridad, etc.) se mantengan antes y después de la transacción.</p></article>
+        <article class="card"><h3>Aislamiento</h3><p>Las transacciones concurrentes no interfieren entre sí, evitando efectos de lectura o escritura no deseados.</p></article>
+        <article class="card"><h3>Durabilidad</h3><p>Una vez confirmada, la transacción persiste incluso ante fallos del sistema.</p></article>
+      </div>
+
+      <h2>Principios SOLID</h2>
+      <div class="grid">
+        <article class="card"><h3>Single Responsibility</h3><p>Una clase debe tener una única razón para cambiar. Promueve cohesión y claridad.</p></article>
+        <article class="card"><h3>Open/Closed</h3><p>Las entidades deben estar abiertas a extensión pero cerradas a modificación. Se logra mediante interfaces y herencia.</p></article>
+        <article class="card"><h3>Liskov Substitution</h3><p>Los objetos de una subclase deben poder reemplazar a los de su superclase sin alterar la funcionalidad del programa.</p></article>
+        <article class="card"><h3>Interface Segregation</h3><p>Las interfaces deben ser específicas y no forzar a implementar métodos innecesarios.</p></article>
+        <article class="card"><h3>Dependency Inversion</h3><p>Las dependencias deben estar definidas en abstracciones, no en implementaciones concretas.</p></article>
+      </div>
+
+      <h2>Pilares de la Programación Orientada a Objetos</h2>
+      <div class="grid">
+        <article class="card"><h3>Abstracción</h3><p>Oculta los detalles innecesarios mostrando solo la información esencial para el usuario del objeto.</p></article>
+        <article class="card"><h3>Encapsulamiento</h3><p>Protege el estado interno del objeto y controla su acceso mediante métodos públicos.</p></article>
+        <article class="card"><h3>Herencia</h3><p>Permite crear nuevas clases basadas en otras, promoviendo reutilización y jerarquías lógicas.</p></article>
+        <article class="card"><h3>Polimorfismo</h3><p>Permite que un mismo método o interfaz se comporte de diferentes maneras según el objeto que lo implemente.</p></article>
+      </div>
+
+      <h2>Otros Conceptos Clave</h2>
+      <div class="grid">
+        <article class="card"><h3>DRY (Don't Repeat Yourself)</h3><p>Evita la duplicación de lógica o información. Centraliza la responsabilidad para facilitar el mantenimiento.</p></article>
+        <article class="card"><h3>KISS (Keep It Simple, Stupid)</h3><p>El diseño debe ser lo más simple posible, evitando la complejidad innecesaria.</p></article>
+        <article class="card"><h3>YAGNI (You Aren’t Gonna Need It)</h3><p>No implementes funcionalidad que no se necesita aún; prioriza lo que aporta valor inmediato.</p></article>
+        <article class="card"><h3>Principio de Responsabilidad Única</h3><p>Relacionado con SOLID, recalca que cada módulo debe encargarse de una parte claramente delimitada del sistema.</p></article>
+        <article class="card"><h3>Principio de Inversión de Dependencias</h3><p>Los módulos de alto nivel no deben depender de los de bajo nivel; ambos deben depender de abstracciones.</p></article>
+      </div>
+
+      <footer>
+        <strong>Consejo:</strong> Comprender estos principios es clave para diseñar sistemas mantenibles, escalables y robustos.
+      </footer>
+    </section>
+  </main>
+</body>
+</html>

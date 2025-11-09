@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preguntas y Respuestas Java Senior</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 40px;
+      background-color: #f5f5f5;
+      color: #222;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #222;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    section {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 25px;
+      margin-bottom: 25px;
+    }
+    h2 {
+      color: #333;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 5px;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+    }
+    h3 {
+      color: #444;
+      font-size: 1.1em;
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+    p {
+      margin-left: 10px;
+      color: #333;
+    }
+    code {
+      background: #eee;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    pre {
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    @media (max-width: 600px) {
+      body { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Preguntas y Respuestas Java Senior</h1>
+
+  <section>
+    <h2>1. Fundamentos del Lenguaje</h2>
+
+    <h3>¿Cuál es la diferencia entre <code>==</code> y <code>equals()</code>?</h3>
+    <p><code>==</code> compara referencias (si apuntan al mismo objeto en memoria). <code>equals()</code> compara el contenido lógico de los objetos. Por ejemplo, dos <code>String</code> con el mismo texto pueden ser iguales con <code>equals()</code> pero no con <code>==</code>.</p>
+
+    <h3>¿Por qué es importante sobrescribir <code>hashCode()</code> junto con <code>equals()</code>?</h3>
+    <p>Porque las colecciones basadas en hash (como <code>HashMap</code> o <code>HashSet</code>) usan el <code>hashCode</code> para ubicar elementos. Si dos objetos son iguales por <code>equals()</code> pero tienen distintos <code>hashCode()</code>, la colección puede tratarlos como distintos.</p>
+
+    <h3>¿Qué son las clases inmutables y cómo se crean?</h3>
+    <p>Son clases cuyos objetos no cambian su estado una vez creados. Se logra declarando todos los campos como <code>final</code>, evitando setters y devolviendo copias de objetos mutables.</p>
+
+    <h3>¿Qué diferencia hay entre una clase abstracta y una interfaz?</h3>
+    <p>Una clase abstracta puede tener estado y métodos implementados, mientras una interfaz define contratos. Desde Java 8, las interfaces pueden tener métodos <code>default</code> y <code>static</code>.</p>
+
+    <h3>¿Qué es una sealed class y cuándo se usaría?</h3>
+    <p>Una <code>sealed class</code> limita qué clases pueden heredarla mediante la cláusula <code>permits</code>. Se usa cuando quieres controlar jerarquías cerradas de herencia.</p>
+
+    <pre><code>public sealed class Figura permits Circulo, Rectangulo {}
+final class Circulo extends Figura {}
+final class Rectangulo extends Figura {}</code></pre>
+  </section>
+
+  <section>
+    <h2>2. JVM y Memoria</h2>
+
+    <h3>¿Cómo funciona el Heap y el Stack?</h3>
+    <p>El <strong>Heap</strong> almacena objetos dinámicos (creados con <code>new</code>), mientras el <strong>Stack</strong> guarda referencias y variables locales de los métodos. Cada hilo tiene su propio stack.</p>
+
+    <h3>¿Qué tipos de Garbage Collectors existen?</h3>
+    <p>Ejemplos: Serial GC, Parallel GC, G1, ZGC y Shenandoah. G1 es el predeterminado moderno: divide el heap en regiones y recolecta de manera concurrente.</p>
+
+    <h3>¿Qué es el Metaspace?</h3>
+    <p>Es donde se almacenan las metainformaciones de clases (en lugar de PermGen). Su tamaño depende de la memoria nativa.</p>
+
+    <h3>¿Qué sucede internamente cuando ejecutas <code>new</code>?</h3>
+    <p>Se reserva memoria en el Heap, se ejecuta el constructor y se devuelve una referencia al objeto recién creado.</p>
+
+    <h3>¿Cómo detectar un memory leak?</h3>
+    <p>Usando herramientas como VisualVM, JProfiler o el comando <code>jmap</code> para analizar heap dumps. También observando crecimiento continuo del heap sin GC efectivo.</p>
+  </section>
+
+  <section>
+    <h2>3. Concurrencia y Paralelismo</h2>
+
+    <h3>¿Qué diferencia hay entre un hilo y un proceso?</h3>
+    <p>Un proceso es independiente y tiene su propio espacio de memoria; un hilo comparte la memoria del proceso que lo creó.</p>
+
+    <h3>¿Qué diferencia hay entre <code>synchronized</code>, <code>Lock</code> y <code>ReentrantLock</code>?</h3>
+    <p><code>synchronized</code> bloquea automáticamente y libera el monitor. <code>ReentrantLock</code> permite más control: bloqueo manual, tiempo de espera y comprobación del estado.</p>
+
+    <h3>¿Qué es <code>volatile</code>?</h3>
+    <p>Garantiza que las lecturas/escrituras de un campo sean visibles para todos los hilos y evita que el valor se almacene en caché por hilo.</p>
+
+    <h3>¿Qué es <code>CompletableFuture</code>?</h3>
+    <p>Permite ejecutar tareas asíncronas no bloqueantes con callbacks. Métodos comunes: <code>thenApply</code>, <code>thenAccept</code>, <code>thenCombine</code>, <code>exceptionally</code>.</p>
+
+    <pre><code>CompletableFuture.supplyAsync(() -> "Hola")
+    .thenApply(s -> s + " mundo")
+    .thenAccept(System.out::println);</code></pre>
+  </section>
+
+  <section>
+    <h2>4. Colecciones y Streams</h2>
+
+    <h3>¿Cómo funciona internamente un HashMap?</h3>
+    <p>Usa una tabla hash donde cada posición es una lista o árbol binario (desde Java 8). Las colisiones se resuelven encadenando elementos con el mismo hash.</p>
+
+    <h3>¿Qué pasa si dos claves tienen el mismo hashCode?</h3>
+    <p>Se almacenan en la misma posición del bucket y se comparan usando <code>equals()</code>.</p>
+
+    <h3>¿Qué diferencia hay entre <code>ConcurrentHashMap</code> y <code>HashMap</code>?</h3>
+    <p><code>ConcurrentHashMap</code> es thread-safe sin necesidad de sincronizar manualmente, dividiendo internamente el mapa en segmentos.</p>
+
+    <h3>¿Qué diferencia hay entre operaciones intermedias y terminales?</h3>
+    <p>Las intermedias (como <code>map</code> o <code>filter</code>) devuelven un nuevo stream; las terminales (<code>collect</code>, <code>forEach</code>) finalizan el flujo.</p>
+
+    <pre><code>List&lt;String&gt; nombres = List.of("Ana", "Juan", "Luis");
+List&lt;String&gt; resultado = nombres.stream()
+    .filter(n -> n.startsWith("J"))
+    .map(String::toUpperCase)
+    .toList();</code></pre>
+  </section>
+
+  <section>
+    <h2>5. Patrones de Diseño y Arquitectura</h2>
+
+    <h3>¿Cómo implementar un Singleton correctamente?</h3>
+    <pre><code>public class Singleton {
+  private static final Singleton INSTANCE = new Singleton();
+  private Singleton() {}
+  public static Singleton getInstance() { return INSTANCE; }
+}</code></pre>
+
+    <h3>¿Qué son los principios SOLID?</h3>
+    <p>Son cinco principios para crear código mantenible: SRP, OCP, LSP, ISP y DIP. Promueven bajo acoplamiento y alta cohesión.</p>
+
+    <h3>¿Qué diferencia hay entre monolito y microservicio?</h3>
+    <p>Un monolito agrupa toda la lógica en una sola aplicación; los microservicios la dividen en servicios independientes con APIs ligeras.</p>
+  </section>
+
+  <section>
+    <h2>6. Spring Framework y APIs</h2>
+
+    <h3>¿Qué diferencia hay entre <code>@Component</code>, <code>@Service</code> y <code>@Repository</code>?</h3>
+    <p>Todas marcan un bean gestionado por Spring, pero <code>@Service</code> denota lógica de negocio y <code>@Repository</code> acceso a datos (además traduce excepciones específicas de persistencia).</p>
+
+    <h3>¿Qué es el contexto de aplicación?</h3>
+    <p>Es el contenedor principal de Spring que gestiona los beans, sus ciclos de vida y dependencias.</p>
+
+    <h3>¿Cómo manejar transacciones?</h3>
+    <p>Usando <code>@Transactional</code> sobre métodos que deben ejecutarse como unidad atómica. Spring gestiona commit o rollback automáticamente.</p>
+  </section>
+
+  <section>
+    <h2>7. Rendimiento y Buenas Prácticas</h2>
+
+    <h3>¿Qué es el pooling de conexiones?</h3>
+    <p>Es la reutilización de conexiones de base de datos para reducir latencia y carga del servidor. Librerías como HikariCP lo implementan.</p>
+
+    <h3>¿Qué significa que una colección sea fail-fast?</h3>
+    <p>Significa que lanza <code>ConcurrentModificationException</code> si se modifica estructuralmente mientras se itera.</p>
+
+    <h3>¿Cómo medir el tiempo de ejecución?</h3>
+    <pre><code>long start = System.nanoTime();
+// código
+long end = System.nanoTime();
+System.out.println("Tiempo: " + (end - start));</code></pre>
+  </section>
+
+  <section>
+    <h2>8. Nuevas Funcionalidades de Java Moderno</h2>
+
+    <h3>¿Qué es un <code>record</code>?</h3>
+    <p>Es una clase inmutable para modelar datos. Genera automáticamente constructor, <code>equals</code>, <code>hashCode</code> y <code>toString</code>.</p>
+
+    <pre><code>public record Persona(String nombre, int edad) {}
+Persona p = new Persona("Ana", 30);</code></pre>
+
+    <h3>¿Qué mejoras trae el <code>switch</code> moderno?</h3>
+    <p>Permite devolver valores y usar expresiones más limpias.</p>
+
+    <pre><code>String dia = "MON";
+String tipo = switch (dia) {
+  case "SAT", "SUN" -> "Fin de semana";
+  default -> "Laboral";
+};</code></pre>
+  </section>
+
+  <section>
+    <h2>9. Comparaciones de String y Objetos</h2>
+  
+    <h3>¿Cuál es la diferencia entre comparar Strings con <code>==</code> y con <code>equals()</code>?</h3>
+    <p>
+      El operador <code>==</code> compara referencias (si apuntan al mismo objeto en memoria), mientras que 
+      <code>equals()</code> compara el contenido del texto.  
+      Dos Strings pueden tener el mismo valor pero ser diferentes objetos.
+    </p>
+  
+    <pre><code>String a = new String("hola");
+  String b = new String("hola");
+  System.out.println(a == b);       // false (distintas referencias)
+  System.out.println(a.equals(b));  // true  (mismo contenido)</code></pre>
+  
+    <h3>¿Qué es el String Pool y cómo afecta las comparaciones?</h3>
+    <p>
+      Java mantiene un <strong>pool de Strings internados</strong> para optimizar memoria.  
+      Los literales se almacenan allí, y si se crea un nuevo literal con el mismo contenido, se reutiliza.
+    </p>
+  
+    <pre><code>String x = "hola";
+  String y = "hola";
+  System.out.println(x == y);       // true (mismo objeto del pool)
+  System.out.println(x.equals(y));  // true</code></pre>
+  
+    <h3>¿Qué hace el método <code>intern()</code>?</h3>
+    <p>
+      Devuelve la referencia del String desde el pool si ya existe, o lo agrega si no.  
+      Se usa para comparar cadenas por referencia cuando se necesita optimización de memoria.
+    </p>
+  
+    <pre><code>String a = new String("java");
+  String b = "java";
+  System.out.println(a == b);          // false
+  System.out.println(a.intern() == b); // true (ambos del pool)</code></pre>
+  
+    <h3>¿Cómo se comparan otros objetos por valor o referencia?</h3>
+    <p>
+      - Por defecto, los objetos se comparan por referencia con <code>==</code>.<br>
+      - Para comparar por valor, se sobrescribe <code>equals()</code> y <code>hashCode()</code>.<br>
+      - Las clases wrapper (<code>Integer</code>, <code>Double</code>, etc.) también deben compararse con <code>equals()</code>.
+    </p>
+  
+    <pre><code>Integer i1 = 1000;
+  Integer i2 = 1000;
+  System.out.println(i1 == i2);       // false (objetos distintos)
+  System.out.println(i1.equals(i2));  // true  (mismo valor)</code></pre>
+  
+    <h3>Nota sobre el caché de wrappers</h3>
+    <p>
+      Java almacena en caché los <code>Integer</code> del rango [-128, 127].  
+      Por eso, comparaciones con <code>==</code> en ese rango pueden parecer correctas, pero fuera de él fallan.
+    </p>
+  
+    <pre><code>Integer a = 127;
+  Integer b = 127;
+  System.out.println(a == b); // true (caché)
+  
+  Integer c = 128;
+  Integer d = 128;
+  System.out.println(c == d); // false (fuera del rango de caché)</code></pre>
+  </section>
+  
+</body>
+</html>

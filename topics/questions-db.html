@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preguntas de Entrevista: JPA, Hibernate y Bases de Datos</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    h1, h2 {
+      color: #222;
+    }
+    h1 {
+      text-align: center;
+      border-bottom: 3px solid #ddd;
+      padding-bottom: 0.5rem;
+      margin-bottom: 2rem;
+    }
+    section {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      padding: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    h3 {
+      margin-top: 1.2rem;
+      color: #333;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    code {
+      color: #c7254e;
+      background-color: #f9f2f4;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Preguntas de Entrevista: JPA, Hibernate y Bases de Datos</h1>
+
+  <section>
+    <h2>1. JPA (Java Persistence API)</h2>
+
+    <h3>¿Qué es JPA y cuál es su propósito?</h3>
+    <p>
+      JPA es una especificación de Java que define cómo mapear clases Java a tablas de bases de datos relacionales.  
+      Simplifica el manejo de datos al permitir trabajar con objetos en lugar de SQL directamente.
+    </p>
+
+    <h3>¿Cuál es la diferencia entre EntityManager y Session?</h3>
+    <p>
+      <code>EntityManager</code> pertenece a JPA (interfaz estándar), mientras que <code>Session</code> es específica de Hibernate.  
+      Ambos gestionan el ciclo de vida de las entidades, pero <code>Session</code> ofrece funcionalidades adicionales propietarias de Hibernate.
+    </p>
+
+    <h3>¿Qué estrategias de generación de IDs existen en JPA?</h3>
+    <p>
+      Las más comunes son:
+      <ul>
+        <li><code>GenerationType.IDENTITY</code> – la base de datos genera el ID (autoincrement).</li>
+        <li><code>GenerationType.SEQUENCE</code> – usa secuencias (útil en Oracle o PostgreSQL).</li>
+        <li><code>GenerationType.TABLE</code> – almacena los IDs en una tabla dedicada.</li>
+        <li><code>GenerationType.AUTO</code> – JPA elige según la base de datos.</li>
+      </ul>
+    </p>
+
+    <h3>¿Cómo maneja JPA el Lazy Loading?</h3>
+    <p>
+      Las relaciones con <code>fetch = FetchType.LAZY</code> cargan los datos solo cuando se acceden.  
+      Esto evita traer datos innecesarios, pero puede generar errores de sesión cerrada si se accede fuera de la transacción.
+    </p>
+
+    <h3>¿Qué son los Entity Graph en JPA y cómo se usan?</h3>
+<p>
+  Un <strong>Entity Graph</strong> en JPA es una característica que permite definir qué relaciones deben cargarse de manera explícita cuando se consulta una entidad, optimizando el rendimiento y evitando el <em>N+1 problem</em>.
+</p>
+<p>
+  En lugar de usar <code>fetch = EAGER</code> o consultas personalizadas, puedes definir un <em>Entity Graph</em> que especifique qué asociaciones se deben traer de forma <em>fetch</em> (cargadas inmediatamente) y cuáles deben permanecer perezosas (<em>lazy</em>).
+</p>
+
+<h4>Ejemplo:</h4>
+<pre><code class="language-java">
+// Definición del EntityGraph en la entidad
+@Entity
+@NamedEntityGraph(
+    name = "User.withRoles",
+    attributeNodes = {
+        @NamedAttributeNode("roles")
+    }
+)
+public class User {
+    @Id
+    private Long id;
+    private String name;
+
+    @OneToMany(mappedBy = "user")
+    private List<Role> roles;
+}
+
+// Uso del EntityGraph en una consulta
+EntityGraph<?> graph = entityManager.getEntityGraph("User.withRoles");
+Map&lt;String, Object&gt; properties = new HashMap&lt;&gt;();
+properties.put("javax.persistence.fetchgraph", graph);
+
+User user = entityManager.find(User.class, 1L, properties);
+</code></pre>
+
+<p>
+  En este ejemplo, al buscar un <code>User</code>, JPA cargará automáticamente los <code>roles</code> definidos en el Entity Graph sin necesidad de usar un <code>JOIN FETCH</code> en la consulta.  
+  Esto mejora la legibilidad del código y te da control dinámico sobre qué relaciones se cargan en distintos contextos.
+</p>
+
+  </section>
+
+  <section>
+    <h2>2. Hibernate</h2>
+
+    <h3>¿Qué papel juega el SessionFactory?</h3>
+    <p>
+      <code>SessionFactory</code> es un objeto pesado y thread-safe que crea y administra sesiones (<code>Session</code>) en Hibernate.  
+      Suele instanciarse una sola vez por aplicación.
+    </p>
+
+    <h3>¿Qué diferencia hay entre persist(), merge() y save()?</h3>
+    <ul>
+      <li><strong>persist()</strong>: Método estándar JPA. Inserta una nueva entidad si no existe.</li>
+      <li><strong>merge()</strong>: Sincroniza una entidad detached con la base de datos.</li>
+      <li><strong>save()</strong>: Método propio de Hibernate. Retorna el ID generado.</li>
+    </ul>
+
+    <h3>¿Qué son los niveles de caché en Hibernate?</h3>
+    <p>
+      Hibernate maneja dos niveles de caché:
+      <ul>
+        <li><strong>Primer nivel:</strong> asociada a la sesión, activa por defecto.</li>
+        <li><strong>Segundo nivel:</strong> compartida entre sesiones; configurable (Ehcache, Infinispan, etc.).</li>
+      </ul>
+    </p>
+
+    <h3>¿Qué es el N+1 problem y cómo evitarlo?</h3>
+    <p>
+      Ocurre cuando se ejecuta una consulta para una entidad principal y luego se hacen consultas adicionales 
+      por cada elemento relacionado.  
+      Se evita usando <code>fetch join</code>, <code>EntityGraph</code> o configurando relaciones con <code>FetchType.LAZY</code>.
+    </p>
+  </section>
+
+  <section>
+    <h2>3. Bases de Datos y Replicación</h2>
+
+    <h3>¿Qué es la replicación de bases de datos?</h3>
+    <p>
+      Es el proceso de mantener copias sincronizadas de una base de datos en varios servidores.  
+      Mejora la disponibilidad y el rendimiento en entornos distribuidos.
+    </p>
+
+    <h3>¿Qué tipos de replicación existen?</h3>
+    <ul>
+      <li><strong>Maestro-Esclavo:</strong> un nodo principal escribe, los demás solo leen.</li>
+      <li><strong>Multi-Maestro:</strong> todos los nodos pueden escribir; requiere resolución de conflictos.</li>
+      <li><strong>Asíncrona:</strong> las réplicas se actualizan con retardo.</li>
+      <li><strong>Síncrona:</strong> la escritura se confirma solo cuando todas las réplicas actualizan.</li>
+    </ul>
+
+    <h3>¿Qué problemas puede causar la replicación?</h3>
+    <p>
+      Puede generar inconsistencias temporales, conflictos de escritura, y aumentar la latencia en escrituras síncronas.
+    </p>
+  </section>
+
+  <section>
+    <h2>4. Optimización de Consultas</h2>
+
+    <h3>¿Cómo optimizar consultas en Hibernate?</h3>
+    <ul>
+      <li>Usar <code>JOIN FETCH</code> para evitar N+1 queries.</li>
+      <li>Proyectar solo los campos necesarios con <code>SELECT new</code>.</li>
+      <li>Utilizar <code>batch-size</code> en colecciones grandes.</li>
+      <li>Configurar cachés de segundo nivel.</li>
+      <li>Indexar columnas frecuentemente consultadas.</li>
+    </ul>
+
+    <h3>¿Cómo identificar consultas lentas?</h3>
+    <p>
+      Activando logs SQL en Hibernate (<code>spring.jpa.show-sql=true</code>)  
+      y analizando el <strong>plan de ejecución</strong> (EXPLAIN en SQL).
+    </p>
+  </section>
+
+  <section>
+    <h2>5. Optimización y Rendimiento de Bases de Datos</h2>
+
+    <h3>¿Qué factores afectan el rendimiento?</h3>
+    <ul>
+      <li>Falta de índices en columnas clave.</li>
+      <li>Consultas no parametrizadas (provocan recompilación del plan).</li>
+      <li>Transacciones demasiado largas.</li>
+      <li>Bloqueos de tablas o filas.</li>
+      <li>Exceso de joins innecesarios.</li>
+    </ul>
+
+    <h3>¿Cómo mejorar la performance?</h3>
+    <ul>
+      <li>Usar índices y particiones adecuadamente.</li>
+      <li>Analizar estadísticas y planes de ejecución.</li>
+      <li>Optimizar consultas con agregaciones o subconsultas.</li>
+      <li>Utilizar caching y compresión de resultados.</li>
+      <li>Desnormalizar parcialmente si el caso lo amerita.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>6. Modelos Relacionales y No Relacionales</h2>
+
+    <h3>¿Cuáles son las ventajas de los modelos relacionales?</h3>
+    <ul>
+      <li>Integridad referencial garantizada (mediante claves foráneas).</li>
+      <li>Lenguaje estándar de consultas (SQL).</li>
+      <li>Transacciones ACID confiables.</li>
+      <li>Ideal para datos estructurados y relaciones complejas.</li>
+    </ul>
+
+    <h3>¿Cuáles son las ventajas de los modelos NoSQL?</h3>
+    <ul>
+      <li>Alta escalabilidad horizontal.</li>
+      <li>Mayor flexibilidad de esquema (documentos, grafos, pares clave-valor).</li>
+      <li>Excelente rendimiento en lectura/escritura masiva.</li>
+      <li>Adecuado para datos no estructurados o en constante cambio.</li>
+    </ul>
+
+    <h3>¿Cuándo conviene usar uno u otro?</h3>
+    <p>
+      Usa <strong>relacional</strong> cuando requieras consistencia fuerte, transacciones complejas y relaciones entre datos.  
+      Usa <strong>NoSQL</strong> cuando priorices escalabilidad, disponibilidad o esquemas variables.
+    </p>
+  </section>
+
+</body>
+</html>

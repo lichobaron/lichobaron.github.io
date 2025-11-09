@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conceptos Clave de Spring Framework</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fafafa;
+      color: #222;
+      margin: 0;
+      padding: 40px;
+      line-height: 1.6;
+    }
+    h1 {
+      font-size: 2.2em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #111;
+    }
+    h2 {
+      font-size: 1.5em;
+      margin-top: 32px;
+      color: #333;
+    }
+    h3 {
+      font-size: 1.2em;
+      margin-top: 20px;
+      color: #333;
+    }
+    p {
+      margin: 10px 0;
+      max-width: 800px;
+    }
+    code {
+      background-color: #eee;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    pre {
+      background: #f3f3f3;
+      padding: 14px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 15px 0;
+    }
+    ul {
+      margin-left: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Spring Framework — Conceptos Clave</h1>
+
+  <section>
+    <h2>¿Qué es Spring Framework?</h2>
+    <p>
+      <strong>Spring Framework</strong> es un marco de trabajo para desarrollar aplicaciones Java de forma modular, escalable y flexible.  
+      Nació con el objetivo de simplificar el desarrollo empresarial reemplazando la complejidad de EJB (Enterprise Java Beans).
+    </p>
+    <p>
+      Su núcleo se basa en dos pilares: la <strong>Inversión de Control (IoC)</strong> y la <strong>Programación Orientada a Aspectos (AOP)</strong>.
+    </p>
+  </section>
+
+  <section>
+    <h2>Características principales</h2>
+    <ul>
+      <li><strong>Inyección de dependencias (IoC):</strong> gestión automática de objetos y sus relaciones.</li>
+      <li><strong>AOP (Aspect-Oriented Programming):</strong> permite separar la lógica transversal (logging, seguridad, transacciones).</li>
+      <li><strong>Transaccionalidad declarativa:</strong> manejo de transacciones con anotaciones.</li>
+      <li><strong>Integración con frameworks modernos:</strong> como JPA, Hibernate, Kafka, RabbitMQ, etc.</li>
+      <li><strong>Soporte para microservicios:</strong> gracias a Spring Boot, Spring Cloud y Spring Security.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Inversión de Control (IoC) e Inyección de Dependencias</h2>
+    <p>
+      En lugar de crear objetos manualmente con <code>new</code>, Spring los administra dentro de un <strong>contenedor IoC</strong>.
+      Este contenedor crea, configura e inyecta los objetos según su configuración.
+    </p>
+
+    <pre><code>@Component
+public class Motor {
+  public void encender() {
+    System.out.println("Motor encendido");
+  }
+}
+
+@Component
+public class Auto {
+  private final Motor motor;
+
+  @Autowired
+  public Auto(Motor motor) {
+    this.motor = motor;
+  }
+
+  public void iniciar() {
+    motor.encender();
+  }
+}</code></pre>
+
+    <p>
+      Spring se encarga de crear <code>Motor</code> y <code>Auto</code>, e inyectar uno en el otro.  
+      Esto facilita el testeo, mantenimiento y desacoplamiento.
+    </p>
+  </section>
+
+  <section>
+    <h2>Programación Orientada a Aspectos (AOP)</h2>
+    <p>
+      Permite definir <strong>aspectos</strong> que encapsulan lógica transversal como logs, seguridad o manejo de transacciones.  
+      Se aplican mediante anotaciones o proxies.
+    </p>
+
+    <pre><code>@Aspect
+@Component
+public class LoggingAspect {
+  @Before("execution(* com.app.servicios.*.*(..))")
+  public void logAntes(JoinPoint jp) {
+    System.out.println("Ejecutando: " + jp.getSignature());
+  }
+}</code></pre>
+
+    <p>
+      Así, antes de ejecutar cualquier método en <code>com.app.servicios</code>, se registrará una traza automática.
+    </p>
+  </section>
+
+  <section>
+    <h2>Módulos principales de Spring</h2>
+    <ul>
+      <li><strong>Spring Core:</strong> contiene el contenedor IoC.</li>
+      <li><strong>Spring AOP:</strong> permite definir aspectos transversales.</li>
+      <li><strong>Spring MVC:</strong> framework web basado en el patrón Modelo-Vista-Controlador.</li>
+      <li><strong>Spring Data:</strong> simplifica el acceso a bases de datos mediante repositorios.</li>
+      <li><strong>Spring Security:</strong> provee autenticación, autorización y control de sesiones.</li>
+      <li><strong>Spring Boot:</strong> facilita la creación y configuración automática de aplicaciones.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Spring Boot</h2>
+    <p>
+      Spring Boot simplifica la configuración de aplicaciones Spring mediante el uso intensivo de <strong>anotaciones</strong>.  
+      Estas permiten definir la configuración, inyección de dependencias, manejo de peticiones y comportamiento de los beans sin archivos XML.
+    </p>
+  
+    <h3>1. <code>@SpringBootApplication</code></h3>
+    <p>
+      Es la anotación principal que marca el punto de entrada de una aplicación Spring Boot.  
+      Combina tres anotaciones:
+      <code>@Configuration</code>, <code>@EnableAutoConfiguration</code> y <code>@ComponentScan</code>.
+    </p>
+  
+    <pre><code>@SpringBootApplication
+  public class MiAplicacion {
+    public static void main(String[] args) {
+      SpringApplication.run(MiAplicacion.class, args);
+    }
+  }</code></pre>
+
+  <h3>Anotaciones Fundamentales: @Configuration, @EnableAutoConfiguration y @ComponentScan</h3>
+
+  <p>
+    Estas tres anotaciones son la base del funcionamiento de <strong>Spring Boot</strong> y definen cómo se configura, inicializa 
+    y escanea una aplicación. De hecho, la anotación <code>@SpringBootApplication</code> las combina internamente.
+  </p>
+
+  <h3>1. <code>@Configuration</code></h3>
+  <p>
+    Marca una clase como fuente de definiciones de beans para el contenedor de Spring.  
+    Es el equivalente moderno del archivo XML de configuración.  
+    Dentro de una clase <code>@Configuration</code> puedes definir métodos anotados con <code>@Bean</code> 
+    que Spring usará para instanciar y registrar objetos en el contexto.
+  </p>
+
+  <pre><code>@Configuration
+public class AppConfig {
+
+  @Bean
+  public DataSource dataSource() {
+    return new HikariDataSource();
+  }
+
+  @Bean
+  public UsuarioService usuarioService() {
+    return new UsuarioService(dataSource());
+  }
+}</code></pre>
+
+  <p>
+    Cuando Spring detecta esta clase, crea e inicializa los beans definidos en ella y los gestiona como parte del 
+    <strong>ApplicationContext</strong>.  
+    Cada método anotado con <code>@Bean</code> se ejecuta una sola vez, y Spring asegura que se use la misma instancia 
+    en todo el contexto (a menos que se especifique otro <code>scope</code>).
+  </p>
+
+  <h3>2. <code>@EnableAutoConfiguration</code></h3>
+  <p>
+    Activa la <strong>configuración automática</strong> de Spring Boot.  
+    Permite que Spring configure automáticamente los beans necesarios basándose en las dependencias detectadas en el classpath.  
+    Por ejemplo, si encuentra <code>spring-boot-starter-web</code>, automáticamente configurará un servidor embebido Tomcat y un 
+    <code>DispatcherServlet</code>.
+  </p>
+
+  <pre><code>@Configuration
+@EnableAutoConfiguration
+public class Aplicacion {
+  public static void main(String[] args) {
+    SpringApplication.run(Aplicacion.class, args);
+  }
+}</code></pre>
+
+  <p>
+    Internamente, esta anotación busca archivos <code>META-INF/spring.factories</code> donde los módulos de Spring Boot 
+    declaran sus configuraciones automáticas.  
+    Estas configuraciones solo se aplican si se cumplen ciertas condiciones, como la presencia de clases específicas o 
+    propiedades habilitadas (gracias a <code>@ConditionalOnClass</code>, <code>@ConditionalOnMissingBean</code>, etc.).
+  </p>
+
+  <h4>Ejemplo:</h4>
+  <p>
+    Si añades la dependencia <code>spring-boot-starter-data-jpa</code>, 
+    Spring detectará automáticamente una base de datos y configurará un <code>EntityManagerFactory</code>, 
+    un <code>DataSource</code> y un <code>JpaTransactionManager</code> sin necesidad de definirlos manualmente.
+  </p>
+
+  <h3>3. <code>@ComponentScan</code></h3>
+  <p>
+    Indica a Spring en qué paquetes debe buscar clases anotadas con <code>@Component</code>, <code>@Service</code>, 
+    <code>@Repository</code> y <code>@Controller</code>.  
+    Si no se especifica, Spring escanea el paquete donde se encuentra la clase anotada y sus subpaquetes.
+  </p>
+
+  <pre><code>@Configuration
+@ComponentScan(basePackages = "com.ejemplo.app")
+public class AppConfig { }</code></pre>
+
+  <p>
+    Esto le dice a Spring que busque componentes dentro del paquete <code>com.ejemplo.app</code> y los registre como beans.  
+    De esta forma, no es necesario declararlos explícitamente en el código ni en archivos XML.
+  </p>
+
+  <h3>Relación entre las tres anotaciones</h3>
+  <p>
+    En una aplicación típica de Spring Boot, no necesitas usarlas por separado porque 
+    <code>@SpringBootApplication</code> las combina de la siguiente forma:
+  </p>
+
+  <pre><code>@SpringBootApplication
+// Internamente equivale a:
+@Configuration
+@EnableAutoConfiguration
+@ComponentScan</code></pre>
+
+  <p>
+    Así, al usar <code>@SpringBootApplication</code> en la clase principal, Spring:
+  </p>
+  <ul>
+    <li>Lee las definiciones de beans (<code>@Configuration</code>).</li>
+    <li>Configura automáticamente componentes según las dependencias detectadas (<code>@EnableAutoConfiguration</code>).</li>
+    <li>Escanea el paquete base para registrar servicios, controladores y repositorios (<code>@ComponentScan</code>).</li>
+  </ul>
+
+  <h4>Ejemplo completo:</h4>
+  <pre><code>@SpringBootApplication
+public class DemoApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(DemoApplication.class, args);
+  }
+}</code></pre>
+
+  <p>
+    Este único archivo de arranque combina los tres comportamientos, lo que permite crear 
+    aplicaciones robustas con una configuración mínima y sin XML.
+  </p>
+  
+    <h3>2. <code>@Component</code>, <code>@Service</code>, <code>@Repository</code> y <code>@Controller</code></h3>
+    <p>
+      Estas anotaciones marcan clases como <strong>beans detectables</strong> por el escaneo de componentes de Spring.
+    </p>
+  
+    <ul>
+      <li><code>@Component</code>: genérica, para cualquier clase gestionada por Spring.</li>
+      <li><code>@Service</code>: indica lógica de negocio o servicios.</li>
+      <li><code>@Repository</code>: marca clases de acceso a datos, aplicando conversión automática de excepciones.</li>
+      <li><code>@Controller</code>: usada en controladores MVC que manejan peticiones web.</li>
+    </ul>
+  
+    <pre><code>@Service
+  public class UsuarioService {
+    public void registrar(String nombre) { ... }
+  }</code></pre>
+  
+    <h3>3. <code>@RestController</code> y <code>@RequestMapping</code></h3>
+    <p>
+      <code>@RestController</code> combina <code>@Controller</code> y <code>@ResponseBody</code>,  
+      devolviendo objetos directamente como JSON o XML.
+    </p>
+  
+    <pre><code>@RestController
+  @RequestMapping("/api/usuarios")
+  public class UsuarioController {
+  
+    @GetMapping("/{id}")
+    public Usuario obtenerUsuario(@PathVariable Long id) {
+      return new Usuario(id, "Carlos");
+    }
+  }</code></pre>
+  
+    <h3>4. <code>@Autowired</code> y <code>@Qualifier</code></h3>
+    <p>
+      Se utilizan para la <strong>inyección de dependencias</strong>.  
+      <code>@Autowired</code> inyecta automáticamente un bean compatible, y <code>@Qualifier</code> permite especificar uno por nombre cuando hay múltiples implementaciones.
+    </p>
+  
+    <pre><code>@Service
+  public class NotificacionService {
+  
+    private final EmailService emailService;
+  
+    @Autowired
+    public NotificacionService(@Qualifier("gmailService") EmailService emailService) {
+      this.emailService = emailService;
+    }
+  }</code></pre>
+  
+    <h3>5. <code>@Configuration</code> y <code>@Bean</code></h3>
+    <p>
+      Permiten definir beans de manera programática en lugar de usar archivos XML.
+    </p>
+  
+    <pre><code>@Configuration
+  public class AppConfig {
+  
+    @Bean
+    public DataSource dataSource() {
+      return new HikariDataSource();
+    }
+  }</code></pre>
+  
+    <h3>6. <code>@Value</code> y <code>@ConfigurationProperties</code></h3>
+    <p>
+      Se usan para inyectar valores de configuración desde <code>application.properties</code> o <code>application.yml</code>.
+    </p>
+  
+    <pre><code>@Component
+  public class ConfiguracionApp {
+  
+    @Value("${app.nombre}")
+    private String nombre;
+  
+    @Value("${app.version}")
+    private String version;
+  }</code></pre>
+  
+    <pre><code>@ConfigurationProperties(prefix = "servidor")
+  @Component
+  public class ServidorConfig {
+    private String host;
+    private int puerto;
+    // getters y setters
+  }</code></pre>
+  
+    <h3>7. <code>@Profile</code></h3>
+    <p>
+      Permite definir beans que solo se cargan en un entorno específico (por ejemplo, desarrollo o producción).
+    </p>
+  
+    <pre><code>@Service
+  @Profile("dev")
+  public class ServicioDev implements Servicio {
+    public void ejecutar() { System.out.println("Modo desarrollo activo"); }
+  }</code></pre>
+  
+    <h3>8. <code>@Transactional</code></h3>
+    <p>
+      Indica que un método o clase debe ejecutarse dentro de un contexto transaccional.  
+      Si ocurre una excepción en el método, la transacción se revierte automáticamente.
+    </p>
+  
+    <pre><code>@Transactional
+  public void registrarUsuario(Usuario usuario) {
+    usuarioRepository.save(usuario);
+    logService.registrarActividad(usuario);
+  }</code></pre>
+  
+    <h3>9. <code>@Async</code></h3>
+    <p>
+      Permite ejecutar métodos de forma asíncrona en hilos separados, sin bloquear el hilo principal.  
+      Requiere habilitar <code>@EnableAsync</code> en la clase de configuración.
+    </p>
+  
+    <pre><code>@Service
+  public class ReporteService {
+  
+    @Async
+    public void generarReporte() {
+      System.out.println("Ejecutando reporte en hilo: " + Thread.currentThread().getName());
+    }
+  }</code></pre>
+  
+    <h3>10. <code>@Scheduled</code></h3>
+    <p>
+      Define tareas programadas (similar a cron jobs).  
+      Requiere <code>@EnableScheduling</code> en la clase principal.
+    </p>
+  
+    <pre><code>@Scheduled(cron = "0 0 * * * *") // Cada hora
+  public void generarResumen() {
+    System.out.println("Resumen generado automáticamente");
+  }</code></pre>
+  
+    <h3>11. <code>@ExceptionHandler</code> y <code>@ControllerAdvice</code></h3>
+    <p>
+      Mecanismo para el manejo centralizado de excepciones en controladores.
+    </p>
+  
+    <pre><code>@ControllerAdvice
+  public class ManejadorGlobalErrores {
+  
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity&lt;String&gt; manejarError(RuntimeException ex) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+  }</code></pre>
+  
+    <h3>12. <code>@RestClientTest</code>, <code>@DataJpaTest</code> y otras pruebas</h3>
+    <p>
+      Spring Boot ofrece anotaciones específicas para aislar componentes durante pruebas unitarias:
+    </p>
+  
+    <ul>
+      <li><code>@WebMvcTest</code>: prueba controladores MVC.</li>
+      <li><code>@DataJpaTest</code>: prueba repositorios y entidades JPA.</li>
+      <li><code>@RestClientTest</code>: prueba clientes REST.</li>
+      <li><code>@SpringBootTest</code>: carga todo el contexto de la aplicación.</li>
+    </ul>
+  
+    <pre><code>@DataJpaTest
+  class UsuarioRepositoryTest {
+    @Autowired
+    private UsuarioRepository repository;
+  }</code></pre>
+  
+    <p>
+      Estas anotaciones permiten un control preciso sobre qué partes del contexto de Spring se cargan durante las pruebas.
+    </p>
+  </section>
+  
+
+  <section>
+    <h2>Spring Data JPA</h2>
+    <p>
+      Abstrae el acceso a datos mediante interfaces de repositorio.  
+      No necesitas implementar los métodos CRUD manualmente.
+    </p>
+
+    <pre><code>@Entity
+public class Usuario {
+  @Id
+  @GeneratedValue
+  private Long id;
+  private String nombre;
+}
+
+public interface UsuarioRepo extends JpaRepository&lt;Usuario, Long&gt; {
+  List&lt;Usuario&gt; findByNombre(String nombre);
+}</code></pre>
+  </section>
+
+  <section>
+    <h2>Spring Security</h2>
+    <p>
+      Ofrece autenticación y autorización con soporte para JWT, OAuth2, LDAP y más.  
+      Usa filtros y configuración basada en beans.
+    </p>
+
+    <pre><code>@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http
+      .authorizeRequests()
+      .antMatchers("/api/admin/**").hasRole("ADMIN")
+      .anyRequest().authenticated()
+      .and()
+      .formLogin();
+  }
+}</code></pre>
+  </section>
+
+  <section>
+    <h2>Spring vs Java EE</h2>
+    <ul>
+      <li>Spring es más ligero y flexible.</li>
+      <li>No requiere contenedores de aplicación pesados (usa Tomcat embebido).</li>
+      <li>Usa configuración basada en anotaciones en lugar de XML extenso.</li>
+      <li>Facilita microservicios, integración y despliegue rápido.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Ventajas de usar Spring</h2>
+    <ul>
+      <li>Alta modularidad y escalabilidad.</li>
+      <li>Facilidad para hacer pruebas unitarias.</li>
+      <li>Amplio ecosistema y soporte de comunidad.</li>
+      <li>Integración nativa con la nube y servicios modernos.</li>
+      <li>Ideal para aplicaciones monolíticas, reactivas o microservicios.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Scopes de Spring</h2>
+    <p>
+      Un <strong>scope</strong> (alcance) define el <strong>ciclo de vida</strong> y la <strong>visibilidad</strong> de un bean dentro del contenedor de Spring.  
+      Por defecto, los beans son de tipo <code>singleton</code>, pero existen otros alcances según el contexto.
+    </p>
+  
+    <h3>Scopes más comunes en aplicaciones Spring</h3>
+    <ul>
+      <li><strong>singleton</strong>: (por defecto) un único objeto compartido por todo el contexto de la aplicación.</li>
+      <li><strong>prototype</strong>: se crea una nueva instancia cada vez que se solicita el bean.</li>
+      <li><strong>request</strong>: una instancia por solicitud HTTP (solo en aplicaciones web).</li>
+      <li><strong>session</strong>: una instancia por sesión de usuario (web).</li>
+      <li><strong>application</strong>: una instancia por contexto de servlet (web).</li>
+      <li><strong>websocket</strong>: una instancia por sesión WebSocket (Spring 4+).</li>
+    </ul>
+  
+    <h3>Ejemplo de uso</h3>
+    <pre><code>@Component
+  @Scope("prototype")
+  public class Conexion {
+    public Conexion() {
+      System.out.println("Nueva conexión creada");
+    }
+  }</code></pre>
+  
+    <pre><code>@RestController
+  public class DemoController {
+    @Autowired
+    private Conexion conexion1;
+    @Autowired
+    private Conexion conexion2;
+  
+    @GetMapping("/test")
+    public String test() {
+      return conexion1 == conexion2 ? "Mismo objeto" : "Objetos distintos";
+    }
+  }</code></pre>
+  
+    <p>
+      Con <code>@Scope("prototype")</code>, cada inyección de <code>Conexion</code> creará un nuevo objeto.  
+      Si el scope fuera <code>singleton</code>, ambas referencias serían iguales.
+    </p>
+  </section>
+  
+  <section>
+    <h2>Uso y funcionamiento de <code>@Transactional</code></h2>
+    <p>
+      La anotación <code>@Transactional</code> indica que un método o clase debe ejecutarse dentro de una <strong>transacción</strong>.  
+      Spring gestiona automáticamente el inicio, commit o rollback de la transacción según el resultado del método.
+    </p>
+  
+    <h3>Ejemplo básico</h3>
+    <pre><code>@Service
+  public class UsuarioService {
+  
+    @Autowired
+    private UsuarioRepo repo;
+  
+    @Transactional
+    public void crearUsuario(Usuario u) {
+      repo.save(u);
+      if (u.getNombre() == null) {
+        throw new RuntimeException("Nombre requerido");
+      }
+    }
+  }</code></pre>
+  
+    <p>
+      Si ocurre una excepción no controlada (por ejemplo, <code>RuntimeException</code>),  
+      Spring realiza un <strong>rollback</strong> automático de la transacción.
+    </p>
+  
+    <h3>Configuración y comportamiento</h3>
+    <ul>
+      <li><strong>Propagación (propagation):</strong> define cómo debe comportarse la transacción si ya existe otra activa.
+        <ul>
+          <li><code>REQUIRED</code> (por defecto): usa la transacción existente o crea una nueva.</li>
+          <li><code>REQUIRES_NEW</code>: suspende la actual y crea una nueva.</li>
+          <li><code>MANDATORY</code>: falla si no hay transacción activa.</li>
+          <li><code>NEVER</code>: falla si hay una transacción activa.</li>
+        </ul>
+      </li>
+      <li><strong>Isolation:</strong> controla el nivel de aislamiento de los datos (lecturas sucias, no repetibles, etc.).</li>
+      <li><strong>Rollback automático:</strong> se ejecuta por defecto para excepciones no verificadas (RuntimeException o Error).</li>
+      <li><strong>Rollback manual:</strong> puede forzarse mediante <code>TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()</code>.</li>
+    </ul>
+  
+    <h3>Ejemplo con configuración avanzada</h3>
+    <pre><code>@Transactional(
+    propagation = Propagation.REQUIRES_NEW,
+    isolation = Isolation.READ_COMMITTED,
+    timeout = 5,
+    rollbackFor = {SQLException.class}
+  )
+  public void procesarPago(Pago p) throws SQLException {
+    // lógica de pago
+  }</code></pre>
+  
+    <p>
+      En este ejemplo, se inicia una nueva transacción independiente con un timeout de 5 segundos  
+      y rollback automático si ocurre una excepción de tipo <code>SQLException</code>.
+    </p>
+  
+    <h3>Notas importantes</h3>
+    <ul>
+      <li>La transacción solo se aplica si el método es llamado desde otro bean gestionado por Spring.</li>
+      <li>Si se llama internamente (por <code>this.metodo()</code>), el proxy no intercepta la transacción.</li>
+      <li>Se recomienda mantener los métodos transaccionales <strong>cortos</strong> y <strong>centrados en operaciones de datos</strong>.</li>
+    </ul>
+  </section>
+  <section>
+    <h2>Ciclo de Vida de un Bean en Spring</h2>
+    <p>
+      En el contenedor de Spring, los <strong>beans</strong> pasan por una serie de etapas desde su creación hasta su destrucción.  
+      Este proceso está completamente gestionado por el <strong>ApplicationContext</strong>, y puede personalizarse a través de interfaces o anotaciones.
+    </p>
+  
+    <h3>Etapas del ciclo de vida</h3>
+    <ol>
+      <li><strong>Instanciación:</strong> Spring crea una nueva instancia del bean usando el constructor por defecto o mediante inyección de dependencias.</li>
+      <li><strong>Inyección de dependencias:</strong> Se asignan los valores y referencias a otros beans requeridos por el bean actual.</li>
+      <li><strong>Inicialización del contexto:</strong> Si el bean implementa <code>BeanNameAware</code> o <code>BeanFactoryAware</code>, Spring inyecta información contextual como el nombre del bean o la referencia a la fábrica.</li>
+      <li><strong>Inicialización personalizada:</strong> 
+        Si el bean implementa <code>InitializingBean</code> o tiene un método anotado con <code>@PostConstruct</code>, Spring ejecuta la lógica personalizada de inicialización.
+      </li>
+      <li><strong>Uso:</strong> El bean está completamente inicializado y disponible para el resto de la aplicación.</li>
+      <li><strong>Destrucción:</strong> 
+        Antes de que el contenedor se cierre, Spring llama al método <code>destroy()</code> si el bean implementa <code>DisposableBean</code> o si tiene un método anotado con <code>@PreDestroy</code>.
+      </li>
+    </ol>
+  
+    <h3>Ejemplo básico</h3>
+    <pre><code>@Component
+  public class ConexionBD implements InitializingBean, DisposableBean {
+  
+    @Override
+    public void afterPropertiesSet() throws Exception {
+      System.out.println("Inicializando conexión a la base de datos...");
+    }
+  
+    @Override
+    public void destroy() throws Exception {
+      System.out.println("Cerrando conexión a la base de datos...");
+    }
+  }</code></pre>
+  
+    <p>
+      En este ejemplo, Spring ejecutará automáticamente <code>afterPropertiesSet()</code> después de inyectar las dependencias,  
+      y <code>destroy()</code> cuando el contenedor se cierre (por ejemplo, al detener la aplicación).
+    </p>
+  
+    <h3>Uso de anotaciones modernas</h3>
+    <p>
+      En lugar de implementar interfaces, también puedes usar anotaciones del paquete <code>jakarta.annotation</code>:
+    </p>
+  
+    <pre><code>@Component
+  public class CacheService {
+  
+    @PostConstruct
+    public void inicializar() {
+      System.out.println("Cache inicializada");
+    }
+  
+    @PreDestroy
+    public void limpiar() {
+      System.out.println("Cache liberada");
+    }
+  }</code></pre>
+  
+    <p>
+      Spring detecta automáticamente estas anotaciones y ejecuta los métodos en los momentos adecuados del ciclo de vida.
+    </p>
+  
+    <h3>Personalización adicional</h3>
+    <p>
+      También es posible definir métodos de inicialización y destrucción directamente en la configuración del bean:
+    </p>
+  
+    <pre><code>@Bean(initMethod = "inicializar", destroyMethod = "cerrar")
+  public ConexionBD conexion() {
+    return new ConexionBD();
+  }</code></pre>
+  
+    <p>
+      Esto permite registrar métodos específicos sin depender de interfaces o anotaciones.  
+      Es especialmente útil en configuraciones programáticas con <code>@Configuration</code>.
+    </p>
+  
+    <h3>Orden completo del ciclo de vida</h3>
+    <pre><code>
+  1. Bean instanciado
+  2. Dependencias inyectadas
+  3. Métodos Aware ejecutados (BeanNameAware, BeanFactoryAware, etc.)
+  4. Métodos @PostConstruct o afterPropertiesSet()
+  5. Bean disponible para uso
+  6. Métodos @PreDestroy o destroy() ejecutados al cerrar el contexto
+    </code></pre>
+  
+    <h3>Notas importantes</h3>
+    <ul>
+      <li>Los beans con scope <code>prototype</code> no ejecutan automáticamente el método <code>destroy()</code>; deben limpiarse manualmente.</li>
+      <li>Los hooks de inicialización y destrucción solo se aplican si el bean es gestionado por el contenedor de Spring.</li>
+      <li>El ciclo de vida puede variar ligeramente dependiendo del tipo de contenedor (ApplicationContext vs. BeanFactory).</li>
+    </ul>
+  </section>
+    
+
+</body>
+</html>

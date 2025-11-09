@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Conceptos Fundamentales de Java</title>
+  <style>
+    :root{
+      --bg:#f8fafc;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;--accent:#0f172a;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);padding:28px;display:flex;justify-content:center}
+    main{width:100%;max-width:1250px;background:var(--card);border-radius:16px;border:1px solid var(--border);padding:28px;box-shadow:0 8px 30px rgba(0,0,0,0.05)}
+    header{margin-bottom:20px}
+    h1{font-size:24px;margin:0}
+    p.lead{color:var(--muted);margin:4px 0 0 0;font-size:14px}
+    h2{margin-top:30px;font-size:18px;border-bottom:1px solid var(--border);padding-bottom:4px}
+    h3{font-size:15px;margin:10px 0 4px 0;color:var(--accent)}
+    pre{background:#f1f5f9;padding:10px;border-radius:8px;overflow-x:auto;font-size:13px;white-space:pre-wrap}
+    code{background:#f1f5f9;padding:2px 4px;border-radius:4px;font-family:monospace}
+    p,li{font-size:14px;line-height:1.6;color:var(--text)}
+    ul{margin:0 0 10px 20px;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-top:10px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px}
+    table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+    th,td{border:1px solid var(--border);padding:8px;text-align:left;vertical-align:top}
+    th{background:#f1f5f9}
+    footer{margin-top:30px;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Conceptos Fundamentales de Java</h1>
+  <p class="lead">Versiones, JVM, concurrencia, programación funcional y colecciones en detalle.</p>
+</header>
+
+<section>
+  <h2>Principales Versiones de Java con Ejemplos</h2>
+
+  <article class="card">
+    <h3>Java 8 (2014)</h3>
+    <ul>
+      <li>Lambdas y Streams API</li>
+      <li>Default methods en interfaces</li>
+      <li>Clase <code>Optional</code></li>
+      <li>Clase <code>CompletableFuture</code></li>
+      <li>API de fechas (<code>java.time</code>)</li>
+    </ul>
+    <pre><code>// Ejemplo 1: Streams y Lambdas
+List&lt;String&gt; nombres = List.of("Ana", "Juan", "Luis");
+// Filtra nombres que inician con 'A' e imprime
+nombres.stream()
+       .filter(n -&gt; n.startsWith("A"))
+       .forEach(System.out::println);
+
+// Ejemplo 2: Uso de Optional
+Optional&lt;String&gt; nombre = Optional.ofNullable(null);
+System.out.println(nombre.orElse("Desconocido")); // Desconocido
+
+// Ejemplo 3: API de fechas
+LocalDate hoy = LocalDate.now();
+System.out.println(hoy.plusDays(5)); // Fecha 5 días después
+</code></pre>
+  </article>
+
+  <article class="card">
+    <h3>Java 11 (2018 - LTS)</h3>
+    <ul>
+      <li>Soporte para ejecutar archivos .java directamente</li>
+      <li>Nueva API <code>HttpClient</code></li>
+    </ul>
+    <pre><code>// Ejemplo: HttpClient
+HttpClient client = HttpClient.newHttpClient();
+HttpRequest request = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.github.com"))
+    .build();
+HttpResponse&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());
+System.out.println(response.body()); // Muestra respuesta del servidor
+
+</code></pre>
+  </article>
+
+  <article class="card">
+    <h3>Java 17 (2021 - LTS)</h3>
+    <ul>
+      <li>String Text Blocks</li>
+      <li>Records</li>
+      <li>Sealed Classes</li>
+      <li>Pattern Matching para instanceof</li>
+    </ul>
+    <pre><code>// Ejemplo: Record
+record Persona(String nombre, int edad) {}
+Persona p = new Persona("Carlos", 30);
+System.out.println(p.nombre()); // Carlos
+
+// Ejemplo: Pattern Matching
+Object obj = "Hola";
+if (obj instanceof String s) {
+    System.out.println(s.toUpperCase()); // HOLA
+}
+
+// Ejemplo de Sealed Class (Java 17+)
+
+// Solo permite herencia de clases autorizadas
+public sealed class Figura permits Circulo, Rectangulo {}
+    
+// Subclases permitidas
+final class Circulo extends Figura {}
+final class Rectangulo extends Figura {}
+    
+Figura f = new Circulo();
+System.out.println(f.getClass().getSimpleName()); // Circulo
+</code></pre>
+  </article>
+
+  <article class="card">
+    <h3>Java 21 (2023 - LTS)</h3>
+    <ul>
+      <li>Virtual Threads (Project Loom)</li>
+      <li>Pattern Matching avanzado</li>
+      <li>String Templates (preview)</li>
+    </ul>
+    <pre><code>// Ejemplo: Virtual Threads
+try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+    executor.submit(() -&gt; System.out.println(Thread.currentThread()));
+}
+</code></pre>
+  </article>
+</section>
+
+<section>
+    <h2>Funcionamiento Interno de la JVM</h2>
+    <p>La JVM (Java Virtual Machine) es el entorno que ejecuta el bytecode generado por el compilador de Java.</p>
+    <ul>
+    <li><strong>Class Loader:</strong> Carga las clases en memoria.</li>
+    <li><strong>Bytecode Verifier:</strong> Verifica la integridad del bytecode antes de ejecutarlo.</li>
+    <li><strong>Execution Engine:</strong> Interpreta o compila con JIT para ejecutar el código nativo.</li>
+    <li><strong>Garbage Collector:</strong> Administra la memoria liberando objetos no utilizados.</li>
+    </ul>
+    <h3>Memoria en la JVM</h3>
+    <ul>
+    <li><strong>Heap:</strong> Almacena objetos y arrays. Dividido en Young y Old Generation. Gestionado por el GC.</li>
+    <li><strong>Stack:</strong> Contiene variables locales y frames de cada método por hilo. Se libera automáticamente.</li>
+    <li><strong>Metaspace:</strong> Guarda metadatos de clases cargadas. Reemplaza a PermGen y crece dinámicamente.</li>
+    <li><strong>PC Register:</strong> Mantiene la instrucción actual por hilo.</li>
+    <li><strong>Native Method Stack:</strong> Almacena llamadas a métodos nativos de C/C++ (JNI).</li>
+    </ul>
+    
+    
+    <table>
+    <tr><th>Región</th><th>Qué almacena</th><th>Gestión</th><th>Asociada a hilo</th></tr>
+    <tr><td>Heap</td><td>Objetos, arrays</td><td>GC</td><td>No</td></tr>
+    <tr><td>Stack</td><td>Variables locales, frames</td><td>Automática</td><td>Sí</td></tr>
+    <tr><td>Metaspace</td><td>Metadatos de clases</td><td>JVM</td><td>No</td></tr>
+    <tr><td>PC Register</td><td>Instrucción actual</td><td>Automática</td><td>Sí</td></tr>
+    <tr><td>Native Stack</td><td>Métodos JNI</td><td>Automática</td><td>Sí</td></tr>
+    </table>
+</section>
+
+<section>
+    <h2>Manejo de Hilos en Java</h2>
+  
+    <p>
+      Java ofrece múltiples enfoques para manejar la concurrencia, desde el modelo clásico basado en <code>Thread</code> 
+      hasta herramientas modernas como <code>CompletableFuture</code> y los <em>Virtual Threads</em> de Project Loom.
+      El objetivo es optimizar el uso de recursos y simplificar el diseño de aplicaciones concurrentes.
+    </p>
+  
+    <h3>1. Modelo Clásico con Thread y Runnable</h3>
+    <p>
+      En este modelo, los hilos se crean extendiendo la clase <code>Thread</code> o implementando la interfaz <code>Runnable</code>. 
+      Es el enfoque más básico, pero ofrece poco control sobre la gestión de los hilos.
+    </p>
+    <pre><code>// Usando Thread
+  class MiHilo extends Thread {
+    public void run() {
+      System.out.println("Hilo ejecutado: " + Thread.currentThread().getName());
+    }
+  }
+  
+  new MiHilo().start();
+  
+  // Usando Runnable
+  Runnable tarea = () -> System.out.println("Desde Runnable: " + Thread.currentThread().getName());
+  new Thread(tarea).start();
+  </code></pre>
+  
+    <h3>2. Executor Framework</h3>
+    <p>
+      Introducido en Java 5, <code>ExecutorService</code> desacopla la creación de hilos de la ejecución de tareas.
+      Permite manejar un pool de hilos reutilizables y facilita el envío de tareas sin crear hilos manualmente.
+    </p>
+    <pre><code>// Uso de ExecutorService
+  ExecutorService ejecutor = Executors.newFixedThreadPool(3);
+  
+  for (int i = 0; i < 5; i++) {
+    int id = i;
+    ejecutor.submit(() -> {
+      System.out.println("Tarea " + id + " ejecutada por " + Thread.currentThread().getName());
+    });
+  }
+  
+  ejecutor.shutdown();
+  </code></pre>
+  
+    <h3>3. ForkJoinPool</h3>
+    <p>
+      Diseñado para tareas que pueden dividirse en subtareas más pequeñas (paralelismo divide y vencerás).
+      Se usa comúnmente con el API de <code>Parallel Streams</code> o directamente con <code>RecursiveTask</code>.
+    </p>
+    <pre><code>// Ejemplo ForkJoinTask
+  class Suma extends RecursiveTask<Integer> {
+    private final int[] arr;
+    private final int start, end;
+  
+    Suma(int[] arr, int start, int end) {
+      this.arr = arr; this.start = start; this.end = end;
+    }
+  
+    protected Integer compute() {
+      if (end - start <= 3) { // caso base
+        int suma = 0;
+        for (int i = start; i < end; i++) suma += arr[i];
+        return suma;
+      }
+      int mid = (start + end) / 2;
+      Suma izquierda = new Suma(arr, start, mid);
+      Suma derecha = new Suma(arr, mid, end);
+      izquierda.fork();
+      return derecha.compute() + izquierda.join();
+    }
+  }
+  
+  ForkJoinPool pool = new ForkJoinPool();
+  int total = pool.invoke(new Suma(new int[]{1,2,3,4,5,6}, 0, 6));
+  System.out.println("Suma total: " + total);
+  </code></pre>
+  
+  
+    <h3>4. Virtual Threads (Project Loom, Java 21+)</h3>
+    <p>
+      Los <strong>Virtual Threads</strong> son hilos ligeros gestionados por la JVM, no por el sistema operativo.
+      Permiten millones de hilos concurrentes, ideales para servidores o tareas I/O intensivas sin bloquear recursos físicos.
+    </p>
+    <pre><code>// Ejemplo con Virtual Threads
+  try (var scope = Executors.newVirtualThreadPerTaskExecutor()) {
+    for (int i = 0; i < 3; i++) {
+      int id = i;
+      scope.submit(() -> {
+        System.out.println("Virtual Thread " + id + " ejecutado en " + Thread.currentThread());
+        Thread.sleep(1000);
+        return null;
+      });
+    }
+  }
+  </code></pre>
+  
+    <h3>5. CompletableFuture — Concurrencia Asíncrona Moderna</h3>
+    <p>
+      Introducido en Java 8, <code>CompletableFuture</code> permite programar tareas asíncronas de manera fluida y no bloqueante.
+      Se integra con el <code>ForkJoinPool</code> por defecto y admite composición de tareas, encadenamiento y manejo de errores.
+    </p>
+  
+    <h4>Principales métodos:</h4>
+    <ul>
+      <li><code>supplyAsync(Supplier&lt;T&gt;)</code>: Ejecuta una tarea que devuelve un valor en un hilo separado.</li>
+      <li><code>runAsync(Runnable)</code>: Ejecuta una tarea sin valor de retorno.</li>
+      <li><code>thenApply(Function&lt;T,R&gt;)</code>: Transforma el resultado de una tarea.</li>
+      <li><code>thenAccept(Consumer&lt;T&gt;)</code>: Consume el resultado sin devolver nada.</li>
+      <li><code>thenCombine()</code>: Combina resultados de dos tareas asíncronas.</li>
+      <li><code>exceptionally(Function&lt;Throwable,T&gt;)</code>: Maneja excepciones.</li>
+      <li><code>allOf()/anyOf()</code>: Sincroniza múltiples tareas concurrentes.</li>
+    </ul>
+  
+    <pre><code>// Ejemplo completo con CompletableFuture
+  CompletableFuture<Integer> futuro = CompletableFuture.supplyAsync(() -> {
+    System.out.println("Cálculo en hilo: " + Thread.currentThread().getName());
+    return 10;
+  })
+  .thenApply(n -> n * 2) // transforma el resultado
+  .thenCombine(
+    CompletableFuture.supplyAsync(() -> 5),
+    (a, b) -> a + b // combina ambos resultados
+  )
+  .exceptionally(e -> {
+    System.out.println("Error: " + e.getMessage());
+    return 0;
+  });
+  
+  System.out.println("Resultado final: " + futuro.join());
+  </code></pre>
+
+  <h3>6. Parallel Streams API</h3>
+  <p>
+    El <strong>API de Parallel Streams</strong> (introducido en Java 8) permite procesar colecciones en paralelo
+    aprovechando automáticamente los núcleos del CPU. Internamente, utiliza el <code>ForkJoinPool.commonPool()</code>
+    para dividir el trabajo en subtareas que se ejecutan concurrentemente.
+  </p>
+
+  <p>
+    Un <code>Stream</code> secuencial procesa los elementos uno tras otro, mientras que un
+    <code>parallelStream()</code> divide los datos en segmentos, ejecutándolos en distintos hilos.
+    Es ideal para operaciones <em>sin efectos secundarios</em> y que pueden ejecutarse de forma independiente.
+  </p>
+
+  <pre><code>// Ejemplo básico de Parallel Stream
+List<Integer> numeros = IntStream.rangeClosed(1, 10).boxed().toList();
+
+int sumaParalela = numeros.parallelStream() // Ejecuta en varios hilos
+    .mapToInt(n -> {
+        System.out.println("Procesando " + n + " en " + Thread.currentThread().getName());
+        return n;
+    })
+    .sum();
+
+System.out.println("Suma total: " + sumaParalela);
+</code></pre>
+
+  <h4>Ventajas:</h4>
+  <ul>
+    <li>Aprovecha múltiples núcleos del procesador sin manejar hilos manualmente.</li>
+    <li>Reduce el tiempo de ejecución en operaciones intensivas de datos.</li>
+    <li>Integración natural con el API de Streams existente.</li>
+  </ul>
+
+  <h4>Consideraciones:</h4>
+  <ul>
+    <li>No siempre mejora el rendimiento en colecciones pequeñas (el overhead del paralelismo puede ser mayor).</li>
+    <li>Evita modificar estructuras compartidas dentro del stream (no thread-safe).</li>
+    <li>Por defecto, usa el <code>ForkJoinPool.commonPool()</code>; se puede personalizar usando <code>parallelStream().forEachAsync(...)</code> con un pool propio.</li>
+  </ul>
+
+  <pre><code>// Ejemplo controlando el pool de hilos usado por el Parallel Stream
+ForkJoinPool pool = new ForkJoinPool(4);
+pool.submit(() ->
+  IntStream.rangeClosed(1, 5).parallel().forEach(n ->
+    System.out.println("Tarea " + n + " en " + Thread.currentThread().getName())
+  )
+).join();
+</code></pre>
+
+  <p>
+    En resumen, los <strong>Parallel Streams</strong> ofrecen una forma declarativa de procesar datos en paralelo,
+    apoyándose en el <em>Fork/Join Framework</em> sin necesidad de manejar explícitamente la concurrencia.
+  </p>
+  
+    <p>
+      <strong>Ventajas:</strong> evita el bloqueo de hilos, permite componer tareas asíncronas, 
+      manejar excepciones de forma fluida y aprovechar mejor los núcleos de CPU.
+    </p>
+  </section>
+  
+
+<section>
+  <h2>Interfaces Funcionales Clave</h2>
+  <div class="grid">
+    <article class="card"><h3>Function&lt;T,R&gt;</h3><pre><code>// Convierte un entero a String
+Function&lt;Integer,String&gt; f = x -&gt; "Valor: " + x;
+System.out.println(f.apply(5)); // Valor: 5</code></pre></article>
+    <article class="card"><h3>Consumer&lt;T&gt;</h3><pre><code>// Consume un valor sin retornar nada
+Consumer&lt;String&gt; c = s -&gt; System.out.println(s.toUpperCase());
+c.accept("hola"); // HOLA</code></pre></article>
+    <article class="card"><h3>Supplier&lt;T&gt;</h3><pre><code>// Provee valores
+Supplier&lt;Double&gt; s = Math::random;
+System.out.println(s.get());</code></pre></article>
+    <article class="card"><h3>Predicate&lt;T&gt;</h3><pre><code>// Evalúa condición booleana
+Predicate&lt;Integer&gt; p = x -&gt; x &gt; 10;
+System.out.println(p.test(12)); // true</code></pre></article>
+    <article class="card"><h3>BiFunction&lt;T,U,R&gt;</h3><pre><code>// Combina dos entradas
+BiFunction&lt;Integer,Integer,Integer&gt; sum = (a,b) -&gt; a+b;
+System.out.println(sum.apply(2,3)); // 5</code></pre></article>
+  </div>
+</section>
+
+<section>
+    <h2>Collections Framework</h2>
+  
+    <p>
+      El <strong>Collections Framework</strong> de Java es un conjunto de interfaces y clases que permiten
+      almacenar y manipular grupos de objetos de manera eficiente. Las principales interfaces son:
+    </p>
+    <ul>
+      <li><strong>Collection&lt;E&gt;:</strong> raíz de la jerarquía, agrupa elementos individuales.</li>
+      <li><strong>List&lt;E&gt;:</strong> colección ordenada que permite elementos duplicados y acceso por índice.</li>
+      <li><strong>Set&lt;E&gt;:</strong> colección que no permite duplicados.</li>
+      <li><strong>Queue&lt;E&gt;:</strong> colección que sigue un orden de procesamiento (FIFO o prioridad).</li>
+      <li><strong>Deque&lt;E&gt;:</strong> doble cola que permite inserciones y eliminaciones por ambos extremos.</li>
+      <li><strong>Map&lt;K,V&gt;:</strong> estructura que asocia claves con valores.</li>
+    </ul>
+  
+    <table>
+      <tr><th>Clase / Interfaz</th><th>Funcionamiento Interno</th><th>Complejidad Promedio</th><th>Uso Recomendado</th></tr>
+      <tr><td>ArrayList</td><td>Array dinámico redimensionable</td><td>add O(1), get O(1), remove O(n)</td><td>Acceso aleatorio rápido</td></tr>
+      <tr><td>LinkedList</td><td>Lista doblemente enlazada</td><td>add O(1), get O(n)</td><td>Inserciones frecuentes</td></tr>
+      <tr><td>HashSet</td><td>Hash table</td><td>add/get O(1)</td><td>Evitar duplicados</td></tr>
+      <tr><td>TreeSet</td><td>Árbol rojo-negro</td><td>add/get O(log n)</td><td>Datos ordenados</td></tr>
+      <tr><td>HashMap</td><td>Hash table con buckets</td><td>get/put O(1)</td><td>Mapeo clave-valor rápido</td></tr>
+      <tr><td>TreeMap</td><td>Árbol rojo-negro</td><td>get/put O(log n)</td><td>Mapeo ordenado por clave</td></tr>
+      <tr><td>PriorityQueue</td><td>Heap binario</td><td>insert O(log n), peek O(1)</td><td>Colas con prioridad</td></tr>
+      <tr><td>ArrayDeque</td><td>Array circular</td><td>add/remove O(1)</td><td>Implementación eficiente de cola doble</td></tr>
+      <tr><td>Vector</td><td>Array sincronizado</td><td>add/get O(1)</td><td>Versión antigua y thread-safe de ArrayList</td></tr>
+      <tr><td>Hashtable</td><td>Hash table sincronizada</td><td>get/put O(1)</td><td>Versión antigua y thread-safe de HashMap</td></tr>
+      <tr><td>ConcurrentHashMap</td><td>Segmentos concurrentes</td><td>get/put O(1)</td><td>Map thread-safe sin bloqueos globales</td></tr>
+      <tr><td>CopyOnWriteArrayList</td><td>Copia en escritura</td><td>Lectura O(1), escritura O(n)</td><td>Lecturas frecuentes, pocas escrituras</td></tr>
+    </table>
+  
+    <p>
+      <strong>Nota:</strong> 
+      <em>PriorityQueue</em> permite procesar elementos según una prioridad definida, no necesariamente en orden FIFO, siendo ideal
+      para algoritmos como Dijkstra o planificadores de tareas. 
+      Por su parte, <em>Deque</em> (Double-Ended Queue) permite insertar y eliminar elementos por ambos extremos, lo que la hace útil
+      para implementar pilas (<code>Stack</code>) o colas.
+    </p>
+  
+    <p>
+      Las clases <em>Vector</em> y <em>Hashtable</em> son implementaciones antiguas sincronizadas, consideradas en desuso en favor de
+      las versiones modernas no sincronizadas y las alternativas del paquete <code>java.util.concurrent</code> como 
+      <em>ConcurrentHashMap</em> y <em>CopyOnWriteArrayList</em>, que son thread-safe y mucho más eficientes.
+    </p>
+  
+    <pre><code>// Ejemplo HashMap
+  Map<String, Integer> edades = new HashMap<>();
+  edades.put("Ana", 30);
+  System.out.println(edades.get("Ana")); // 30
+  </code></pre>
+</section>
+
+<section>
+    <h2>Igualdad de Objetos: <code>equals()</code> y <code>hashCode()</code></h2>
+  
+    <p>
+      En Java, todos los objetos heredan los métodos <code>equals()</code> y <code>hashCode()</code> de la clase <code>Object</code>.  
+      Estos métodos determinan cómo se comparan los objetos y cómo se comportan en estructuras como <code>HashMap</code>, <code>HashSet</code> o <code>Hashtable</code>.
+    </p>
+  
+    <h3>Contrato entre <code>equals()</code> y <code>hashCode()</code></h3>
+    <ul>
+      <li>Si dos objetos son iguales según <code>equals()</code>, deben tener el mismo <code>hashCode()</code>.</li>
+      <li>Si dos objetos tienen el mismo <code>hashCode()</code>, no necesariamente son iguales (puede haber colisiones).</li>
+      <li>Durante la ejecución, el valor devuelto por <code>hashCode()</code> debe ser consistente mientras no cambien los atributos usados en <code>equals()</code>.</li>
+    </ul>
+  
+    <details>
+      <summary>Implementación básica recomendada</summary>
+      <pre><code>public class Persona {
+    private String nombre;
+    private int edad;
+  
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) return true;
+      if (obj == null || getClass() != obj.getClass()) return false;
+      Persona persona = (Persona) obj;
+      return edad == persona.edad &&
+             Objects.equals(nombre, persona.nombre);
+    }
+  
+    @Override
+    public int hashCode() {
+      return Objects.hash(nombre, edad);
+    }
+  }</code></pre>
+      <p>
+        Aquí se usa <code>Objects.equals()</code> y <code>Objects.hash()</code> (desde Java 7) para simplificar el código.  
+        De esta forma, dos personas con el mismo nombre y edad serán iguales lógicamente.
+      </p>
+    </details>
+  
+    <details>
+      <summary>Ejemplo de error común</summary>
+      <pre><code>public class Persona {
+    private String nombre;
+  
+    @Override
+    public boolean equals(Object obj) {
+      return nombre.equals(((Persona)obj).nombre);
+    }
+    // ❌ hashCode() no sobrescrito
+  }</code></pre>
+      <p>
+        Esto rompe el contrato: dos objetos pueden ser "iguales" según <code>equals()</code>, pero tener <code>hashCode()</code> distintos.  
+        En un <code>HashSet</code> o <code>HashMap</code>, podrían almacenarse como elementos distintos.
+      </p>
+    </details>
+  
+    <h3>Buenas prácticas</h3>
+    <ul>
+      <li>Siempre sobrescribe ambos métodos juntos.</li>
+      <li>Usa <code>Objects.equals()</code> y <code>Objects.hash()</code> para evitar <code>NullPointerException</code>.</li>
+      <li>No incluyas campos mutables en la igualdad si pueden cambiar durante el uso del objeto en colecciones hash.</li>
+      <li>Evita usar <code>instanceof</code> en <code>equals()</code> si quieres igualdad estricta por tipo (usa <code>getClass()</code> en su lugar).</li>
+    </ul>
+  
+    <details>
+      <summary>Ejemplo práctico en estructuras de datos</summary>
+      <pre><code>Set&lt;Persona&gt; personas = new HashSet&lt;&gt;();
+  personas.add(new Persona("Ana", 30));
+  personas.add(new Persona("Ana", 30));
+  System.out.println(personas.size()); // 1 si equals/hashCode bien implementados</code></pre>
+    </details>
+  </section>
+  
+<footer>
+  <p><strong>Consejo:</strong> Comprender las colecciones, la JVM y los modelos de concurrencia es esencial para dominar Java moderno.</p>
+</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Preguntas Senior Spring Framework</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      color: #222;
+      margin: 0;
+      padding: 40px;
+      line-height: 1.6;
+    }
+    h1, h2 {
+      color: #1a1a1a;
+    }
+    h1 {
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 10px;
+    }
+    h3 {
+      margin-top: 24px;
+      color: #2c3e50;
+    }
+    code {
+      background-color: #eee;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    section {
+      max-width: 950px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <section>
+    <h1>Preguntas y Respuestas - Entrevista Senior Spring Framework</h1>
+
+    <h3>1. ¿Qué es el contenedor de Spring y cuál es su función?</h3>
+    <p>
+      El contenedor de Spring (como <code>ApplicationContext</code>) gestiona el ciclo de vida de los beans, su creación, inyección de dependencias, inicialización y destrucción.
+      También aplica aspectos como transacciones o seguridad mediante proxies.
+    </p>
+
+    <h3>2. ¿Cuál es la diferencia entre <code>BeanFactory</code> y <code>ApplicationContext</code>?</h3>
+    <p>
+      <code>BeanFactory</code> es el contenedor básico de Spring; crea beans bajo demanda (lazy).
+      <code>ApplicationContext</code> extiende <code>BeanFactory</code> con características adicionales como eventos, internacionalización y carga automática de beans.
+    </p>
+
+    <h3>3. ¿Qué tipos de inyección de dependencias existen en Spring?</h3>
+    <p>
+      - Por constructor<br>
+      - Por setter<br>
+      - Por campo (con <code>@Autowired</code>)  
+      La recomendada es por constructor (permite inmutabilidad y mejor testeo).
+    </p>
+
+    <h3>4. ¿Qué hace la anotación <code>@Autowired</code>?</h3>
+    <p>
+      Indica a Spring que inyecte automáticamente un bean compatible en ese punto.  
+      Si hay múltiples candidatos, se puede usar <code>@Qualifier</code> o <code>@Primary</code>.
+    </p>
+
+    <h3>5. ¿Qué diferencia hay entre <code>@Component</code>, <code>@Service</code> y <code>@Repository</code>?</h3>
+    <p>
+      Todas registran un bean en el contexto, pero indican su rol semántico:
+      <code>@Service</code> para lógica de negocio, <code>@Repository</code> para acceso a datos (maneja excepciones de persistencia), y <code>@Component</code> como anotación genérica.
+    </p>
+
+    <h3>6. ¿Cómo maneja Spring la configuración de beans por defecto?</h3>
+    <p>
+      Usa la configuración automática de <code>@EnableAutoConfiguration</code>, que registra beans basándose en dependencias detectadas y condiciones 
+      (<code>@ConditionalOnClass</code>, <code>@ConditionalOnMissingBean</code>).
+    </p>
+
+    <h3>7. ¿Qué hace <code>@Configuration</code> y cómo se diferencia de <code>@Component</code>?</h3>
+    <p>
+      <code>@Configuration</code> define beans mediante métodos <code>@Bean</code> con soporte completo de proxying de dependencias.
+      <code>@Component</code> simplemente registra una clase como bean, pero sin manejo de métodos <code>@Bean</code>.
+    </p>
+
+    <h3>8. Explica los scopes principales en Spring.</h3>
+    <ul>
+      <li><strong>singleton:</strong> una única instancia (por defecto)</li>
+      <li><strong>prototype:</strong> se crea una nueva instancia cada vez</li>
+      <li><strong>request:</strong> una instancia por petición HTTP</li>
+      <li><strong>session:</strong> una instancia por sesión web</li>
+      <li><strong>application:</strong> compartido en todo el contexto servlet</li>
+    </ul>
+
+    <h3>9. ¿Qué es AOP en Spring?</h3>
+    <p>
+      <strong>Aspect-Oriented Programming</strong> permite aplicar comportamientos transversales (como logs o seguridad) sin alterar la lógica del negocio.
+      Se implementa usando proxies dinámicos alrededor de los beans.
+    </p>
+
+    <h3>10. Explica el uso de <code>@Transactional</code>.</h3>
+    <p>
+      Define que un método se ejecute dentro de una transacción.  
+      Si ocurre una excepción no controlada (unchecked), la transacción se revierte (rollback automático).  
+      Puede personalizarse con atributos como <code>propagation</code>, <code>isolation</code> y <code>readOnly</code>.
+    </p>
+
+    <h3>11. ¿Qué hace <code>@RestController</code>?</h3>
+    <p>
+      Combina <code>@Controller</code> y <code>@ResponseBody</code>, haciendo que los métodos devuelvan directamente JSON o XML, sin necesidad de una vista.
+    </p>
+
+    <h3>12. ¿Qué diferencia hay entre <code>@Controller</code> y <code>@RestController</code>?</h3>
+    <p>
+      <code>@Controller</code> se usa en aplicaciones web MVC que devuelven vistas (HTML, JSP, Thymeleaf).  
+      <code>@RestController</code> se usa en APIs RESTful que devuelven respuestas serializadas (JSON).
+    </p>
+
+    <h3>13. ¿Qué es un Bean Post Processor?</h3>
+    <p>
+      Es una interfaz (<code>BeanPostProcessor</code>) que permite ejecutar lógica antes y después de la inicialización de cada bean.
+      Spring la usa internamente para manejar anotaciones como <code>@Autowired</code> o <code>@Transactional</code>.
+    </p>
+
+    <h3>14. ¿Cómo funciona la inyección de propiedades con <code>@Value</code>?</h3>
+    <p>
+      Permite inyectar valores definidos en <code>application.properties</code> o <code>application.yml</code> directamente en campos o métodos.
+    </p>
+    <pre><code>@Value("${app.titulo}")
+private String titulo;</code></pre>
+
+    <h3>15. ¿Qué diferencia hay entre <code>@Bean</code> y <code>@Component</code>?</h3>
+    <p>
+      <code>@Bean</code> se usa en una clase <code>@Configuration</code> para registrar beans de forma explícita.  
+      <code>@Component</code> marca clases detectadas automáticamente por <code>@ComponentScan</code>.
+    </p>
+
+    <h3>16. Explica cómo maneja Spring la concurrencia con <code>@Async</code>.</h3>
+    <p>
+      Ejecuta métodos en hilos separados usando un <code>TaskExecutor</code> configurable.  
+      Devuelve <code>Future</code> o <code>CompletableFuture</code> para manejar resultados asíncronos.
+    </p>
+
+    <h3>17. ¿Qué es <code>@Profile</code>?</h3>
+    <p>
+      Permite definir beans que solo se cargan en un entorno específico (por ejemplo, <code>dev</code>, <code>test</code>, <code>prod</code>).  
+      Se activan con la propiedad <code>spring.profiles.active</code>.
+    </p>
+
+    <h3>18. ¿Qué diferencia hay entre <code>@RequestParam</code>, <code>@PathVariable</code> y <code>@RequestBody</code>?</h3>
+    <ul>
+      <li><code>@RequestParam</code>: obtiene valores de parámetros de consulta (query params).</li>
+      <li><code>@PathVariable</code>: extrae variables de la URL.</li>
+      <li><code>@RequestBody</code>: mapea el cuerpo JSON de la petición a un objeto Java.</li>
+    </ul>
+
+    <h3>19. ¿Cómo maneja Spring la inyección circular?</h3>
+    <p>
+      A partir de Spring 2.6, la inyección circular por constructor está deshabilitada por defecto.  
+      Se puede resolver mediante setters, proxies (<code>@Lazy</code>) o rediseñando las dependencias.
+    </p>
+
+    <h3>20. Explica cómo funciona el ciclo de vida de un Bean.</h3>
+    <p>
+      1️⃣ Instanciación →  
+      2️⃣ Inyección de dependencias →  
+      3️⃣ Inicialización (<code>@PostConstruct</code> o <code>afterPropertiesSet()</code>) →  
+      4️⃣ Uso →  
+      5️⃣ Destrucción (<code>@PreDestroy</code> o <code>destroy()</code>)
+    </p>
+
+    <h3>21. ¿Qué hace <code>@EnableScheduling</code> y <code>@Scheduled</code>?</h3>
+    <p>
+      <code>@EnableScheduling</code> habilita la ejecución de tareas programadas, y <code>@Scheduled</code> marca métodos para ejecutarse de forma periódica (por cron o fixedRate).
+    </p>
+
+    <h3>22. ¿Qué es un proxy en Spring y cuándo se utiliza?</h3>
+    <p>
+      Spring crea proxies dinámicos (JDK o CGLIB) para interceptar llamadas a métodos y aplicar lógica adicional (transacciones, seguridad, logging, etc.).
+    </p>
+
+    <h3>23. ¿Cómo maneja Spring Boot los perfiles de configuración?</h3>
+    <p>
+      Puedes tener archivos separados como <code>application-dev.yml</code> o <code>application-prod.yml</code>.
+      El perfil activo se elige con <code>spring.profiles.active</code> en variables de entorno o configuración.
+    </p>
+
+    <h3>24. ¿Qué es <code>Spring Boot Starter</code>?</h3>
+    <p>
+      Es un conjunto preconfigurado de dependencias y configuraciones para un propósito específico (ej: <code>spring-boot-starter-web</code>, <code>spring-boot-starter-data-jpa</code>).
+    </p>
+
+    <h3>25. ¿Cómo manejarías un problema de rendimiento en una aplicación Spring Boot?</h3>
+    <p>
+      Analizaría métricas con <code>Spring Boot Actuator</code>, usaría logs de hilos, mediría tiempos con <code>@Timed</code>, y aplicaría caching (<code>@EnableCaching</code>) o ajustes de pool de conexiones.
+    </p>
+
+    <h3>26. ¿Qué tipo de inyección conviene más en Spring y por qué?</h3>
+<p>
+  La <strong>inyección por constructor</strong> es la más recomendada, especialmente en proyectos modernos con Spring Boot.  
+  Permite crear objetos inmutables, facilita las pruebas unitarias (ya que las dependencias se pueden pasar explícitamente) y garantiza que el bean esté completamente inicializado al momento de su creación.  
+  La inyección por campo (<code>@Autowired</code> directamente sobre atributos) es más simple pero menos flexible y difícil de probar, mientras que la inyección por setter es útil cuando una dependencia es opcional.
+</p>
+
+  </section>
+</body>
+</html>
