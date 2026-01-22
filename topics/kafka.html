@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apache Kafka - Resumen y Entrevistas</title>
+  <title>Apache Kafka - Resumen, Spring y Escalabilidad</title>
 
   <style>
     body {
@@ -69,193 +69,207 @@
 
 <body>
 
-<h1>Apache Kafka – Resumen y Entrevistas</h1>
+<h1>Apache Kafka – Resumen, Spring y Escalabilidad</h1>
 
 <section>
   <h2>1. ¿Qué es Kafka?</h2>
-
   <p>
-    <strong>[Apache Kafka](chatgpt://generic-entity?number=0)</strong>
-    es una plataforma distribuida de <strong>event streaming</strong> diseñada para
-    manejar grandes volúmenes de datos en tiempo real, de forma escalable y tolerante a fallos.
+    <strong>Apache Kafka</strong> es una plataforma distribuida de
+    <strong>event streaming</strong> diseñada para manejar grandes volúmenes
+    de eventos en tiempo real de forma escalable y tolerante a fallos.
   </p>
 
   <ul>
-    <li>Alta performance (millones de eventos por segundo)</li>
-    <li>Persistencia de mensajes</li>
+    <li>Alta performance</li>
+    <li>Persistencia en disco</li>
     <li>Escalabilidad horizontal</li>
-    <li>Tolerancia a fallos</li>
+    <li>Arquitectura distribuida</li>
   </ul>
 </section>
 
 <section>
-  <h2>2. Casos de Uso Comunes</h2>
+  <h2>2. Componentes Principales</h2>
 
   <ul>
-    <li>Comunicación asíncrona entre microservicios</li>
-    <li>Event-driven architectures</li>
-    <li>Streaming de logs y métricas</li>
-    <li>Data pipelines (ETL)</li>
-    <li>Procesamiento en tiempo real</li>
+    <li><strong>Broker</strong>: nodo Kafka que almacena datos</li>
+    <li><strong>Topic</strong>: canal lógico de eventos</li>
+    <li><strong>Partition</strong>: unidad de paralelismo</li>
+    <li><strong>Producer</strong>: publica eventos</li>
+    <li><strong>Consumer</strong>: consume eventos</li>
+    <li><strong>Consumer Group</strong>: grupo de consumidores coordinados</li>
   </ul>
 </section>
 
 <section>
-  <h2>3. Componentes Principales de Kafka</h2>
+  <h2>3. Kafka + Spring Boot</h2>
 
-  <h3>Broker</h3>
   <p>
-    Un <strong>broker</strong> es un servidor Kafka que almacena y sirve datos.
-    Un cluster Kafka está compuesto por múltiples brokers.
+    Spring facilita la integración con Kafka a través de
+    <strong>Spring for Apache Kafka</strong>, eliminando código boilerplate
+    y ofreciendo configuración declarativa.
   </p>
 
-  <h3>Topic</h3>
+  <h3>Dependencia Maven</h3>
+
+  <pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;org.springframework.kafka&lt;/groupId&gt;
+  &lt;artifactId&gt;spring-kafka&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+  <h3>Producer con Spring</h3>
+
+  <pre><code>@Service
+public class OrderProducer {
+
+  private final KafkaTemplate&lt;String, Order&gt; kafkaTemplate;
+
+  public OrderProducer(KafkaTemplate&lt;String, Order&gt; kafkaTemplate) {
+    this.kafkaTemplate = kafkaTemplate;
+  }
+
+  public void send(Order order) {
+    kafkaTemplate.send("orders-topic", order.getId(), order);
+  }
+}</code></pre>
+
+  <h3>Consumer con Spring</h3>
+
+  <pre><code>@KafkaListener(
+  topics = "orders-topic",
+  groupId = "order-group"
+)
+public void consume(Order order) {
+  process(order);
+}</code></pre>
+
   <p>
-    Un <strong>topic</strong> es una categoría lógica donde se publican los mensajes.
-    Kafka no elimina mensajes inmediatamente después de consumirlos.
+    ✔ Manejo automático de deserialización  
+    ✔ Soporte para retries y error handling  
+    ✔ Integración nativa con Spring Boot
   </p>
-
-  <h3>Partition</h3>
-  <p>
-    Cada topic se divide en <strong>particiones</strong>, lo que permite paralelismo
-    y escalabilidad.
-  </p>
-
-  <ul>
-    <li>El orden se garantiza solo dentro de una partición</li>
-    <li>Cada mensaje tiene un <code>offset</code></li>
-  </ul>
-
-  <h3>Producer</h3>
-  <p>
-    El <strong>producer</strong> publica mensajes en uno o más topics.
-  </p>
-
-  <ul>
-    <li>Puede decidir la partición (key-based)</li>
-    <li>Soporta acknowledgements (<code>acks</code>)</li>
-  </ul>
-
-  <h3>Consumer</h3>
-  <p>
-    El <strong>consumer</strong> lee mensajes desde los topics.
-  </p>
-
-  <ul>
-    <li>Consume mensajes por offset</li>
-    <li>Puede reprocesar mensajes</li>
-  </ul>
-
-  <h3>Consumer Group</h3>
-  <p>
-    Un <strong>consumer group</strong> permite que múltiples consumidores
-    trabajen juntos.
-  </p>
-
-  <ul>
-    <li>Cada partición es consumida por un solo consumer del grupo</li>
-    <li>Permite escalabilidad horizontal</li>
-  </ul>
 </section>
 
 <section>
-  <h2>4. Kafka Architecture Highlights</h2>
+  <h2>4. Escalabilidad en Kafka</h2>
 
+  <h3>Escalando Producers</h3>
   <ul>
-    <li>Persistencia en disco (no solo en memoria)</li>
-    <li>Replicación entre brokers</li>
-    <li>Leader / Follower por partición</li>
-    <li>ZooKeeper (o KRaft) para coordinación</li>
+    <li>Múltiples producers pueden escribir al mismo topic</li>
+    <li>Kafka distribuye mensajes entre particiones</li>
   </ul>
+
+  <h3>Escalando Consumers</h3>
+  <ul>
+    <li>Un consumer por partición dentro de un consumer group</li>
+    <li>Para escalar consumo → más particiones</li>
+  </ul>
+
+  <pre><code>
+Consumers ≤ Partitions
+</code></pre>
+
+  <h3>Escalando Brokers</h3>
+  <ul>
+    <li>Agregar brokers aumenta capacidad y throughput</li>
+    <li>Las particiones se redistribuyen automáticamente</li>
+  </ul>
+
+  <p>
+    ⚠ El número de particiones define el límite máximo de paralelismo
+  </p>
 </section>
 
 <section>
-  <h2>5. Garantías de Entrega</h2>
+  <h2>5. Topics y Particiones como Elementos Lógicos</h2>
+
+  <p>
+    En Kafka, los topics y particiones no son solo estructuras técnicas,
+    sino <strong>elementos de diseño lógico</strong>.
+  </p>
+
+  <h3>Diseño de Topics</h3>
 
   <ul>
-    <li><strong>At most once</strong> → posible pérdida de mensajes</li>
-    <li><strong>At least once</strong> → posible duplicación</li>
-    <li><strong>Exactly once</strong> → sin pérdida ni duplicación (más complejo)</li>
+    <li>Un topic representa un <strong>tipo de evento</strong></li>
+    <li>Ejemplo:
+      <ul>
+        <li><code>order-created</code></li>
+        <li><code>payment-confirmed</code></li>
+        <li><code>user-registered</code></li>
+      </ul>
+    </li>
   </ul>
+
+  <h3>Uso de Keys</h3>
+
+  <p>
+    Las <strong>keys</strong> determinan la partición y preservan el orden lógico.
+  </p>
+
+  <pre><code>
+// Todos los eventos de una orden van a la misma partición
+key = orderId
+</code></pre>
+
+  <h3>Separación por Contexto</h3>
+
+  <ul>
+    <li>Un topic por bounded context</li>
+    <li>Evitar usar un solo topic para todo</li>
+  </ul>
+
+  <p>
+    ✔ Facilita escalabilidad  
+    ✔ Mejora el orden lógico  
+    ✔ Reduce acoplamiento
+  </p>
 </section>
 
 <section>
   <h2>6. Preguntas Comunes de Entrevista</h2>
 
   <div class="question">
-    <strong>Q1: Why Kafka is faster than traditional messaging systems?</strong>
+    <strong>Q1: How do you scale Kafka consumers?</strong>
     <div class="answer">
-      Porque usa escrituras secuenciales en disco, zero-copy y batching,
-      reduciendo el overhead de I/O.
+      Aumentando el número de particiones y consumidores
+      dentro del mismo consumer group.
     </div>
   </div>
 
   <div class="question">
-    <strong>Q2: Does Kafka guarantee message ordering?</strong>
+    <strong>Q2: Why is partition count important?</strong>
     <div class="answer">
-      Sí, pero solo dentro de una misma partición, no a nivel global del topic.
+      Define el máximo nivel de paralelismo tanto para producers
+      como para consumers.
     </div>
   </div>
 
   <div class="question">
-    <strong>Q3: What happens if a consumer crashes?</strong>
+    <strong>Q3: How does Spring Kafka handle message consumption?</strong>
     <div class="answer">
-      Kafka reasigna las particiones a otros consumidores del mismo consumer group
-      y continúa desde el último offset confirmado.
+      Mediante @KafkaListener, manejo automático de offsets
+      y soporte integrado para error handling.
     </div>
   </div>
 
   <div class="question">
-    <strong>Q4: Difference between Kafka and RabbitMQ?</strong>
+    <strong>Q4: How do you design topics in Kafka?</strong>
     <div class="answer">
-      Kafka está orientado a streaming y persistencia de eventos;
-      RabbitMQ está orientado a colas y mensajería tradicional.
-    </div>
-  </div>
-
-  <div class="question">
-    <strong>Q5: What is offset in Kafka?</strong>
-    <div class="answer">
-      Es el identificador secuencial de un mensaje dentro de una partición,
-      usado para controlar el consumo.
-    </div>
-  </div>
-
-  <div class="question">
-    <strong>Q6: Why use consumer groups?</strong>
-    <div class="answer">
-      Para escalar el consumo y asegurar que cada mensaje
-      sea procesado una sola vez por grupo.
-    </div>
-  </div>
-
-  <div class="question">
-    <strong>Q7: Is Kafka push or pull based?</strong>
-    <div class="answer">
-      Kafka es pull-based: los consumers solicitan mensajes cuando están listos.
+      Basados en eventos de negocio y bounded contexts,
+      no en acciones técnicas.
     </div>
   </div>
 </section>
 
 <section>
-  <h2>7. Buenas Prácticas</h2>
-
-  <ul>
-    <li>Diseñar bien las keys para evitar hot partitions</li>
-    <li>Configurar correctamente <code>acks</code> y retries</li>
-    <li>Controlar el commit de offsets</li>
-    <li>No usar Kafka como base de datos</li>
-    <li>Monitorear lag de consumidores</li>
-  </ul>
-</section>
-
-<section>
-  <h2>8. Summary</h2>
+  <h2>7. Summary</h2>
 
   <p>
-    Kafka es una pieza clave en arquitecturas modernas orientadas a eventos.
-    Comprender sus componentes, garantías y patrones de uso es esencial
-    para sistemas distribuidos y entrevistas técnicas de nivel medio y senior.
+    Kafka es una plataforma central para arquitecturas orientadas a eventos.
+    Su correcta integración con Spring, junto con un diseño consciente
+    de topics y particiones, permite construir sistemas altamente escalables,
+    desacoplados y resilientes.
   </p>
 </section>
 
