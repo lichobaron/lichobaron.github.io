@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Servicios Más Comunes de AWS</title>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3 {
+      color: #222;
+    }
+
+    h1 {
+      text-align: center;
+      border-bottom: 3px solid #ddd;
+      padding-bottom: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+      background-color: #fff;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    ul {
+      margin-left: 1.5rem;
+    }
+
+    code {
+      color: #c7254e;
+      background-color: #f9f2f4;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Servicios Más Comunes de AWS</h1>
+
+<section>
+  <h2>¿Qué es AWS?</h2>
+  <p>
+    <strong>[Amazon Web Services](chatgpt://generic-entity?number=0) (AWS)</strong>
+    es una plataforma de computación en la nube que ofrece servicios bajo demanda
+    como cómputo, almacenamiento, bases de datos, redes y seguridad.
+  </p>
+
+  <ul>
+    <li>Modelo pay-as-you-go</li>
+    <li>Alta disponibilidad y escalabilidad</li>
+    <li>Amplio ecosistema de servicios</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Compute (Cómputo)</h2>
+
+  <h3>EC2 (Elastic Compute Cloud)</h3>
+  <p>
+    Máquinas virtuales en la nube. Permite control total del sistema operativo.
+  </p>
+  <ul>
+    <li>Escenarios: aplicaciones legacy, servidores personalizados</li>
+    <li>Se cobra por tiempo de uso</li>
+    <li>Requiere gestión del sistema operativo</li>
+  </ul>
+
+  <h3>Lambda</h3>
+  <p>
+    Servicio serverless para ejecutar código sin administrar servidores.
+  </p>
+  <ul>
+    <li>Escenarios: APIs, jobs, eventos</li>
+    <li>Escala automáticamente</li>
+    <li>Pago por ejecución</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Storage (Almacenamiento)</h2>
+
+  <h3>S3 (Simple Storage Service)</h3>
+  <p>
+    Almacenamiento de objetos altamente duradero.
+  </p>
+  <ul>
+    <li>Escenarios: archivos, backups, hosting estático</li>
+    <li>Durabilidad del 99.999999999%</li>
+    <li>No es un sistema de archivos tradicional</li>
+  </ul>
+
+  <h3>EBS (Elastic Block Store)</h3>
+  <p>
+    Volúmenes de almacenamiento para instancias EC2.
+  </p>
+  <ul>
+    <li>Se comporta como un disco duro</li>
+    <li>Debe estar en la misma AZ que la EC2</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Databases</h2>
+
+  <h3>RDS (Relational Database Service)</h3>
+  <p>
+    Servicio administrado para bases de datos relacionales
+    (MySQL, PostgreSQL, Oracle, SQL Server).
+  </p>
+  <ul>
+    <li>Backups automáticos</li>
+    <li>Alta disponibilidad con Multi-AZ</li>
+    <li>No es serverless</li>
+  </ul>
+
+  <h3>DynamoDB</h3>
+  <p>
+    Base de datos NoSQL serverless, key-value y document.
+  </p>
+  <ul>
+    <li>Latencia de milisegundos</li>
+    <li>Escala automáticamente</li>
+    <li>Ideal para microservicios</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Networking</h2>
+
+  <h3>VPC (Virtual Private Cloud)</h3>
+  <p>
+    Red virtual aislada dentro de AWS.
+  </p>
+  <ul>
+    <li>Control de subnets, IPs y routing</li>
+    <li>Base de toda arquitectura en AWS</li>
+  </ul>
+
+  <h3>Elastic Load Balancer (ELB)</h3>
+  <p>
+    Distribuye tráfico entre múltiples destinos.
+  </p>
+  <ul>
+    <li>Alta disponibilidad</li>
+    <li>Soporta HTTP, HTTPS y TCP</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Security & Identity</h2>
+
+  <h3>IAM (Identity and Access Management)</h3>
+  <p>
+    Gestión de usuarios, roles y permisos.
+  </p>
+  <ul>
+    <li>Principio de mínimo privilegio</li>
+    <li>Roles recomendados sobre access keys</li>
+  </ul>
+
+  <h3>KMS (Key Management Service)</h3>
+  <p>
+    Servicio para manejo de claves de cifrado.
+  </p>
+  <ul>
+    <li>Cifrado de datos en reposo</li>
+    <li>Integrado con otros servicios AWS</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Monitoring & Messaging</h2>
+
+  <h3>CloudWatch</h3>
+  <p>
+    Métricas, logs y alarmas para servicios AWS.
+  </p>
+  <ul>
+    <li>Monitoreo centralizado</li>
+    <li>Alarmas automáticas</li>
+  </ul>
+
+  <h3>SQS (Simple Queue Service)</h3>
+  <p>
+    Servicio de colas para desacoplar sistemas.
+  </p>
+  <ul>
+    <li>Alta durabilidad</li>
+    <li>Ideal para procesamiento asíncrono</li>
+  </ul>
+</section>
+
+<section>
+  <h2>CI/CD & Infrastructure</h2>
+
+  <h3>CloudFormation</h3>
+  <p>
+    Infraestructura como código (IaC).
+  </p>
+  <ul>
+    <li>Templates declarativos</li>
+    <li>Versionamiento de infraestructura</li>
+  </ul>
+
+  <h3>CodePipeline</h3>
+  <p>
+    Automatización de pipelines CI/CD.
+  </p>
+  <ul>
+    <li>Integración con GitHub</li>
+    <li>Deploy continuo</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Detalles Clave para Entrevistas</h2>
+
+  <ul>
+    <li>Lambda ≠ EC2 (serverless vs servidores)</li>
+    <li>S3 ≠ EBS (objeto vs bloque)</li>
+    <li>DynamoDB ≠ RDS (NoSQL vs SQL)</li>
+    <li>IAM es global, no regional</li>
+    <li>Todo corre dentro de una VPC</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Summary</h2>
+  <p>
+    AWS ofrece un amplio conjunto de servicios para construir aplicaciones
+    escalables y seguras. Comprender los servicios más comunes y sus casos
+    de uso es fundamental para diseñar arquitecturas en la nube
+    y para entrevistas técnicas orientadas a Cloud.
+  </p>
+</section>
+
+</body>
+</html>
