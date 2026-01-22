@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apache Kafka - Resumen y Entrevistas</title>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3 {
+      color: #222;
+    }
+
+    h1 {
+      text-align: center;
+      border-bottom: 3px solid #ddd;
+      padding-bottom: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+      background-color: #fff;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    ul {
+      margin-left: 1.5rem;
+    }
+
+    pre {
+      background: #f4f4f4;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    code {
+      color: #c7254e;
+      background-color: #f9f2f4;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    .question {
+      background: #f4f4f4;
+      border-left: 4px solid #888;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .answer {
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Apache Kafka – Resumen y Entrevistas</h1>
+
+<section>
+  <h2>1. ¿Qué es Kafka?</h2>
+
+  <p>
+    <strong>[Apache Kafka](chatgpt://generic-entity?number=0)</strong>
+    es una plataforma distribuida de <strong>event streaming</strong> diseñada para
+    manejar grandes volúmenes de datos en tiempo real, de forma escalable y tolerante a fallos.
+  </p>
+
+  <ul>
+    <li>Alta performance (millones de eventos por segundo)</li>
+    <li>Persistencia de mensajes</li>
+    <li>Escalabilidad horizontal</li>
+    <li>Tolerancia a fallos</li>
+  </ul>
+</section>
+
+<section>
+  <h2>2. Casos de Uso Comunes</h2>
+
+  <ul>
+    <li>Comunicación asíncrona entre microservicios</li>
+    <li>Event-driven architectures</li>
+    <li>Streaming de logs y métricas</li>
+    <li>Data pipelines (ETL)</li>
+    <li>Procesamiento en tiempo real</li>
+  </ul>
+</section>
+
+<section>
+  <h2>3. Componentes Principales de Kafka</h2>
+
+  <h3>Broker</h3>
+  <p>
+    Un <strong>broker</strong> es un servidor Kafka que almacena y sirve datos.
+    Un cluster Kafka está compuesto por múltiples brokers.
+  </p>
+
+  <h3>Topic</h3>
+  <p>
+    Un <strong>topic</strong> es una categoría lógica donde se publican los mensajes.
+    Kafka no elimina mensajes inmediatamente después de consumirlos.
+  </p>
+
+  <h3>Partition</h3>
+  <p>
+    Cada topic se divide en <strong>particiones</strong>, lo que permite paralelismo
+    y escalabilidad.
+  </p>
+
+  <ul>
+    <li>El orden se garantiza solo dentro de una partición</li>
+    <li>Cada mensaje tiene un <code>offset</code></li>
+  </ul>
+
+  <h3>Producer</h3>
+  <p>
+    El <strong>producer</strong> publica mensajes en uno o más topics.
+  </p>
+
+  <ul>
+    <li>Puede decidir la partición (key-based)</li>
+    <li>Soporta acknowledgements (<code>acks</code>)</li>
+  </ul>
+
+  <h3>Consumer</h3>
+  <p>
+    El <strong>consumer</strong> lee mensajes desde los topics.
+  </p>
+
+  <ul>
+    <li>Consume mensajes por offset</li>
+    <li>Puede reprocesar mensajes</li>
+  </ul>
+
+  <h3>Consumer Group</h3>
+  <p>
+    Un <strong>consumer group</strong> permite que múltiples consumidores
+    trabajen juntos.
+  </p>
+
+  <ul>
+    <li>Cada partición es consumida por un solo consumer del grupo</li>
+    <li>Permite escalabilidad horizontal</li>
+  </ul>
+</section>
+
+<section>
+  <h2>4. Kafka Architecture Highlights</h2>
+
+  <ul>
+    <li>Persistencia en disco (no solo en memoria)</li>
+    <li>Replicación entre brokers</li>
+    <li>Leader / Follower por partición</li>
+    <li>ZooKeeper (o KRaft) para coordinación</li>
+  </ul>
+</section>
+
+<section>
+  <h2>5. Garantías de Entrega</h2>
+
+  <ul>
+    <li><strong>At most once</strong> → posible pérdida de mensajes</li>
+    <li><strong>At least once</strong> → posible duplicación</li>
+    <li><strong>Exactly once</strong> → sin pérdida ni duplicación (más complejo)</li>
+  </ul>
+</section>
+
+<section>
+  <h2>6. Preguntas Comunes de Entrevista</h2>
+
+  <div class="question">
+    <strong>Q1: Why Kafka is faster than traditional messaging systems?</strong>
+    <div class="answer">
+      Porque usa escrituras secuenciales en disco, zero-copy y batching,
+      reduciendo el overhead de I/O.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q2: Does Kafka guarantee message ordering?</strong>
+    <div class="answer">
+      Sí, pero solo dentro de una misma partición, no a nivel global del topic.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q3: What happens if a consumer crashes?</strong>
+    <div class="answer">
+      Kafka reasigna las particiones a otros consumidores del mismo consumer group
+      y continúa desde el último offset confirmado.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q4: Difference between Kafka and RabbitMQ?</strong>
+    <div class="answer">
+      Kafka está orientado a streaming y persistencia de eventos;
+      RabbitMQ está orientado a colas y mensajería tradicional.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q5: What is offset in Kafka?</strong>
+    <div class="answer">
+      Es el identificador secuencial de un mensaje dentro de una partición,
+      usado para controlar el consumo.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q6: Why use consumer groups?</strong>
+    <div class="answer">
+      Para escalar el consumo y asegurar que cada mensaje
+      sea procesado una sola vez por grupo.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q7: Is Kafka push or pull based?</strong>
+    <div class="answer">
+      Kafka es pull-based: los consumers solicitan mensajes cuando están listos.
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>7. Buenas Prácticas</h2>
+
+  <ul>
+    <li>Diseñar bien las keys para evitar hot partitions</li>
+    <li>Configurar correctamente <code>acks</code> y retries</li>
+    <li>Controlar el commit de offsets</li>
+    <li>No usar Kafka como base de datos</li>
+    <li>Monitorear lag de consumidores</li>
+  </ul>
+</section>
+
+<section>
+  <h2>8. Summary</h2>
+
+  <p>
+    Kafka es una pieza clave en arquitecturas modernas orientadas a eventos.
+    Comprender sus componentes, garantías y patrones de uso es esencial
+    para sistemas distribuidos y entrevistas técnicas de nivel medio y senior.
+  </p>
+</section>
+
+</body>
+</html>
