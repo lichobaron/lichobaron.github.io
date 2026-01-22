@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>MongoDB with Java</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #0f172a;
+      color: #e5e7eb;
+      margin: 0;
+      padding: 0;
+      line-height: 1.7;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 3rem 1.5rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #38bdf8;
+    }
+
+    h2 {
+      margin-top: 3rem;
+      color: #7dd3fc;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 0.3rem;
+    }
+
+    p {
+      margin: 1rem 0;
+      color: #d1d5db;
+    }
+
+    ul {
+      margin-left: 1.5rem;
+    }
+
+    li {
+      margin: 0.4rem 0;
+    }
+
+    code {
+      background: #020617;
+      color: #e5e7eb;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    pre {
+      background: #020617;
+      padding: 1rem;
+      overflow-x: auto;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    pre code {
+      padding: 0;
+      background: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<main>
+
+<h1>MongoDB with Java</h1>
+
+<p>
+  <strong>[MongoDB](chatgpt://generic-entity?number=0)</strong>
+  es una base de datos <em>NoSQL orientada a documentos</em> que almacena la información
+  en formato JSON (internamente BSON). Es ampliamente utilizada en aplicaciones
+  modernas por su flexibilidad y escalabilidad.
+</p>
+
+<h2>What is MongoDB?</h2>
+
+<p>
+  A diferencia de las bases de datos relacionales, MongoDB no utiliza tablas ni filas.
+  En su lugar, organiza los datos en:
+</p>
+
+<ul>
+  <li><strong>Databases</strong> → contenedores de datos</li>
+  <li><strong>Collections</strong> → conjuntos de documentos</li>
+  <li><strong>Documents</strong> → objetos JSON</li>
+</ul>
+
+<h2>Why Use MongoDB?</h2>
+
+<ul>
+  <li>Esquema flexible</li>
+  <li>Alta escalabilidad horizontal</li>
+  <li>Modelo de datos natural para APIs</li>
+  <li>Excelente rendimiento para lectura y escritura</li>
+</ul>
+
+<h2>Using MongoDB with Java</h2>
+
+<p>
+  Java se conecta a MongoDB usando el
+  <strong>MongoDB Java Driver</strong>, el cual permite trabajar
+  directamente con documentos BSON.
+</p>
+
+<h2>Adding MongoDB Dependency (Maven)</h2>
+
+<pre><code>
+&lt;dependency&gt;
+  &lt;groupId&gt;org.mongodb&lt;/groupId&gt;
+  &lt;artifactId&gt;mongodb-driver-sync&lt;/artifactId&gt;
+  &lt;version&gt;4.11.0&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<h2>Basic Java Example</h2>
+
+<pre><code>
+MongoClient client =
+  MongoClients.create("mongodb://localhost:27017");
+
+MongoDatabase db = client.getDatabase("mydb");
+MongoCollection&lt;Document&gt; users =
+  db.getCollection("users");
+
+users.insertOne(new Document("name", "Carlos"));
+</code></pre>
+
+---
+
+<h2>MongoDB + Spring Boot</h2>
+
+<p>
+  Spring Boot simplifica enormemente el uso de MongoDB gracias a
+  <strong>Spring Data MongoDB</strong>, que elimina la mayor parte
+  del código boilerplate.
+</p>
+
+<h2>Spring Boot Dependency</h2>
+
+<pre><code>
+&lt;dependency&gt;
+  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+  &lt;artifactId&gt;spring-boot-starter-data-mongodb&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+<h2>Application Configuration</h2>
+
+<pre><code>
+spring.data.mongodb.uri=mongodb://localhost:27017/mydb
+</code></pre>
+
+<h2>Defining a Document</h2>
+
+<pre><code>
+@Document(collection = "users")
+public class User {
+
+  @Id
+  private String id;
+  private String name;
+  private String email;
+
+}
+</code></pre>
+
+<h2>Mongo Repository</h2>
+
+<pre><code>
+public interface UserRepository
+  extends MongoRepository&lt;User, String&gt; {
+
+  Optional&lt;User&gt; findByEmail(String email);
+}
+</code></pre>
+
+<h2>Using the Repository</h2>
+
+<pre><code>
+@Service
+public class UserService {
+
+  private final UserRepository repository;
+
+  public UserService(UserRepository repository) {
+    this.repository = repository;
+  }
+
+  public User save(User user) {
+    return repository.save(user);
+  }
+}
+</code></pre>
+
+<h2>Why Use Spring Boot with MongoDB?</h2>
+
+<ul>
+  <li>Menos código repetitivo</li>
+  <li>Integración automática con Spring</li>
+  <li>Soporte para repositorios y queries derivados</li>
+  <li>Configuración mínima</li>
+</ul>
+
+<h2>Summary</h2>
+
+<p>
+  MongoDB es una excelente opción para aplicaciones Java modernas.
+  Usado junto con Spring Boot, permite construir APIs limpias,
+  escalables y fáciles de mantener.
+</p>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Java Collections Framework</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #0f172a;
+      color: #e5e7eb;
+      margin: 0;
+      line-height: 1.7;
+    }
+
+    main {
+      max-width: 920px;
+      margin: auto;
+      padding: 3rem 1.5rem;
+    }
+
+    h1 {
+      font-size: 2.6rem;
+      color: #38bdf8;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      margin-top: 3rem;
+      color: #7dd3fc;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 0.4rem;
+    }
+
+    h3 {
+      margin-top: 2rem;
+      color: #bae6fd;
+    }
+
+    p {
+      margin: 1rem 0;
+      color: #d1d5db;
+    }
+
+    ul {
+      margin-left: 1.5rem;
+    }
+
+    li {
+      margin: 0.4rem 0;
+    }
+
+    code {
+      background: #020617;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    pre {
+      background: #020617;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+
+    .question {
+      background: #020617;
+      border-left: 4px solid #38bdf8;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .answer {
+      margin-top: 0.5rem;
+      color: #c7d2fe;
+    }
+  </style>
+</head>
+
+<body>
+
+<main>
+
+<h1>Java Collections Framework</h1>
+
+<p>
+  El <strong>Java Collections Framework</strong> proporciona un conjunto de
+  interfaces y clases para almacenar, manipular y acceder a grupos de objetos
+  de forma eficiente y consistente.
+</p>
+
+<h2>Core Interfaces</h2>
+
+<ul>
+  <li><strong>List</strong> → colección ordenada, permite duplicados</li>
+  <li><strong>Set</strong> → no permite duplicados</li>
+  <li><strong>Queue / Deque</strong> → acceso FIFO / doble extremo</li>
+  <li><strong>Map</strong> → pares clave–valor</li>
+</ul>
+
+---
+
+<h2>ArrayList vs LinkedList</h2>
+
+<h3>ArrayList: Internal Resizing</h3>
+
+<p>
+  <code>ArrayList</code> está basado en un <strong>array dinámico</strong>.
+  Cuando el array interno se llena:
+</p>
+
+<ul>
+  <li>Se crea un nuevo array más grande (≈ 1.5x del tamaño actual)</li>
+  <li>Se copian todos los elementos al nuevo array</li>
+  <li>La referencia interna se actualiza</li>
+</ul>
+
+<pre><code>
+Capacity growth formula (simplified):
+newCapacity = oldCapacity + (oldCapacity >> 1)
+</code></pre>
+
+<p>
+  ➜ Insertar al final es O(1) amortizado  
+  ➜ Insertar en el medio es O(n)
+</p>
+
+<h3>LinkedList: Insert Operations</h3>
+
+<p>
+  <code>LinkedList</code> usa una <strong>lista doblemente enlazada</strong>.
+</p>
+
+<ul>
+  <li>No requiere redimensionamiento</li>
+  <li>Insertar o eliminar nodos es O(1) (si ya tienes la referencia)</li>
+  <li>Acceso por índice es O(n)</li>
+</ul>
+
+<p>
+  ➜ Mejor para inserciones frecuentes  
+  ➜ Peor para acceso aleatorio
+</p>
+
+---
+
+<h2>Set Implementations</h2>
+
+<h3>HashSet</h3>
+
+<ul>
+  <li>No mantiene orden</li>
+  <li>Permite <strong>un solo null</strong></li>
+  <li>Basado internamente en HashMap</li>
+</ul>
+
+<h3>TreeSet</h3>
+
+<p>
+  <code>TreeSet</code> está basado en un <strong>Red-Black Tree</strong>
+  y mantiene los elementos <strong>ordenados</strong>.
+</p>
+
+<ul>
+  <li>No permite elementos duplicados</li>
+  <li>No permite <strong>null</strong> (lanza NullPointerException)</li>
+  <li>Orden natural o Comparator personalizado</li>
+</ul>
+
+<pre><code>
+TreeSet&lt;Integer&gt; set = new TreeSet<>();
+set.add(10);
+set.add(5);
+set.add(20);
+// Output: 5, 10, 20
+</code></pre>
+
+<p>
+  ➜ Todas las operaciones son O(log n)
+</p>
+
+---
+
+<h2>Map Implementations</h2>
+
+<h3>HashMap</h3>
+
+<ul>
+  <li>No garantiza orden</li>
+  <li>Permite <strong>una clave null</strong> y múltiples valores null</li>
+  <li>Complejidad promedio O(1)</li>
+</ul>
+
+<h3>LinkedHashMap</h3>
+
+<ul>
+  <li>Mantiene orden de inserción</li>
+  <li>Útil para LRU caches</li>
+</ul>
+
+<h3>TreeMap</h3>
+
+<ul>
+  <li>Claves ordenadas</li>
+  <li>No permite claves null</li>
+  <li>Operaciones O(log n)</li>
+</ul>
+
+<h3>ConcurrentHashMap</h3>
+
+<ul>
+  <li>Thread-safe</li>
+  <li>No permite claves ni valores null</li>
+  <li>Mejor rendimiento que Hashtable</li>
+</ul>
+
+---
+
+<h2>Common Interview Questions</h2>
+
+<div class="question">
+  <strong>Q1: How does ArrayList resize internally?</strong>
+  <div class="answer">
+    Cuando el array interno se llena, ArrayList crea uno nuevo
+    con mayor capacidad (~1.5x) y copia todos los elementos,
+    lo que hace que el costo sea O(n) en ese momento.
+  </div>
+</div>
+
+<div class="question">
+  <strong>Q2: Why is insertion faster in LinkedList?</strong>
+  <div class="answer">
+    Porque no requiere copiar elementos; solo ajusta referencias
+    entre nodos (O(1) si se conoce la posición).
+  </div>
+</div>
+
+<div class="question">
+  <strong>Q3: Does TreeSet allow null elements?</strong>
+  <div class="answer">
+    No. TreeSet necesita comparar elementos para mantener el orden,
+    y null no puede ser comparado, por lo que lanza NullPointerException.
+  </div>
+</div>
+
+<div class="question">
+  <strong>Q4: Difference between HashSet and TreeSet?</strong>
+  <div class="answer">
+    HashSet no mantiene orden y es más rápido (O(1)).
+    TreeSet mantiene orden pero es más lento (O(log n)).
+  </div>
+</div>
+
+<div class="question">
+  <strong>Q5: How HashMap works internally?</strong>
+  <div class="answer">
+    Usa un array de buckets y una función hash.
+    Desde Java 8, los buckets pueden convertirse en árboles
+    cuando hay muchas colisiones.
+  </div>
+</div>
+
+<div class="question">
+  <strong>Q6: Why ConcurrentHashMap does not allow null?</strong>
+  <div class="answer">
+    Para evitar ambigüedad entre una clave inexistente
+    y una clave con valor null en entornos concurrentes.
+  </div>
+</div>
+
+<div class="question">
+  <strong>Q7: When to use TreeMap instead of HashMap?</strong>
+  <div class="answer">
+    Cuando se necesita que las claves estén ordenadas
+    o se requiere navegación (range queries).
+  </div>
+</div>
+
+---
+
+<h2>Summary</h2>
+
+<p>
+  El Collections Framework es fundamental para escribir código
+  eficiente y limpio en Java. Entender las diferencias internas
+  entre sus implementaciones es clave para tomar buenas decisiones
+  de diseño y para superar entrevistas técnicas avanzadas.
+</p>
+
+</main>
+
+</body>
+</html>

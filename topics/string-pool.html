@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>String Immutability & String Pool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #0f172a;
+      color: #e5e7eb;
+      margin: 0;
+      padding: 0;
+      line-height: 1.7;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 3rem 1.5rem;
+    }
+
+    h1 {
+      font-size: 2.6rem;
+      margin-bottom: 1rem;
+      color: #38bdf8;
+    }
+
+    h2 {
+      margin-top: 3rem;
+      color: #7dd3fc;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 0.3rem;
+    }
+
+    h3 {
+      margin-top: 2rem;
+      color: #bae6fd;
+    }
+
+    p {
+      margin: 1rem 0;
+      color: #d1d5db;
+    }
+
+    ul {
+      margin-left: 1.5rem;
+    }
+
+    li {
+      margin: 0.5rem 0;
+    }
+
+    code {
+      background: #020617;
+      color: #e5e7eb;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    pre {
+      background: #020617;
+      padding: 1rem;
+      overflow-x: auto;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    pre code {
+      padding: 0;
+      background: none;
+    }
+
+    .question {
+      background: #020617;
+      border-left: 4px solid #38bdf8;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .answer {
+      color: #c7d2fe;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+
+<body>
+
+<main>
+
+<h1>String Immutability & String Pool</h1>
+
+<p>
+  En Java, <strong>String</strong> es una de las clases más importantes
+  y también una de las más preguntadas en entrevistas técnicas.
+  Dos conceptos clave asociados a String son:
+</p>
+
+<ul>
+  <li><strong>String Immutability</strong></li>
+  <li><strong>String Pool</strong></li>
+</ul>
+
+<h2>What is String Immutability?</h2>
+
+<p>
+  Un objeto <code>String</code> es <strong>inmutable</strong>, lo que significa
+  que <em>su valor no puede cambiar una vez ha sido creado</em>.
+</p>
+
+<pre><code>
+String s = "hello";
+s.concat(" world");
+System.out.println(s);
+</code></pre>
+
+<p>
+  El resultado será:
+</p>
+
+<pre><code>
+hello
+</code></pre>
+
+<p>
+  Esto ocurre porque el método <code>concat()</code> no modifica el objeto
+  original, sino que crea un <strong>nuevo objeto String</strong>.
+</p>
+
+<h3>Correct Way</h3>
+
+<pre><code>
+String s = "hello";
+s = s.concat(" world");
+System.out.println(s);
+</code></pre>
+
+<h2>Why Are Strings Immutable?</h2>
+
+<ul>
+  <li><strong>Security</strong>: evita modificar valores sensibles (paths, URLs, credentials)</li>
+  <li><strong>Thread safety</strong>: objetos inmutables son seguros en entornos concurrentes</li>
+  <li><strong>Caching</strong>: permite reutilizar objetos en el String Pool</li>
+  <li><strong>Hashing</strong>: el hashCode no cambia (clave en HashMap)</li>
+</ul>
+
+<h2>What is the String Pool?</h2>
+
+<p>
+  El <strong>String Pool</strong> es una región especial de memoria dentro del
+  <em>Heap</em> donde Java almacena literales String para optimizar memoria.
+</p>
+
+<pre><code>
+String a = "java";
+String b = "java";
+</code></pre>
+
+<p>
+  En este caso:
+</p>
+
+<ul>
+  <li>Solo se crea <strong>un objeto</strong> en memoria</li>
+  <li><code>a</code> y <code>b</code> apuntan al mismo objeto</li>
+</ul>
+
+<pre><code>
+System.out.println(a == b); // true
+</code></pre>
+
+<h2>String Pool vs new String()</h2>
+
+<pre><code>
+String a = "java";
+String b = new String("java");
+</code></pre>
+
+<ul>
+  <li><code>a</code> → String Pool</li>
+  <li><code>b</code> → Heap (nuevo objeto)</li>
+</ul>
+
+<pre><code>
+System.out.println(a == b);      // false
+System.out.println(a.equals(b)); // true
+</code></pre>
+
+<h2>The intern() Method</h2>
+
+<p>
+  El método <code>intern()</code> mueve un String al String Pool
+  (si no existe ya) y retorna la referencia del pool.
+</p>
+
+<pre><code>
+String a = new String("java").intern();
+String b = "java";
+
+System.out.println(a == b); // true
+</code></pre>
+
+<h2>Common Interview Questions</h2>
+
+<div class="question">
+  <strong>Q1: Why is String immutable in Java?</strong>
+  <div class="answer">
+    Para garantizar seguridad, thread-safety, permitir caching en el String Pool
+    y asegurar que el hashCode no cambie cuando se usa como clave en mapas.
+  </div>
+</div>
+
+<div class="question">
+  <strong>Q2: What is the String Pool?</strong>
+  <div class="answer">
+    Es una zona especial del Heap donde Java almacena literales String
+    para reutilizarlos y reducir el consumo de memoria.
+  </div>
+</div>
+
+<div class="question">
+  <strong>Q3: Difference between == and equals() for String?</strong>
+  <div class="answer">
+    <code>==</code> compara referencias de memoria,
+    <code>equals()</code> compara el contenido del String.
+  </div>
+</div>
+
+<div class="question">
+  <strong>Q4: What happens if we use new String("abc")?</strong>
+  <div class="answer">
+    Se crea un nuevo objeto en el Heap, incluso si "abc" ya existe en el String Pool.
+  </div>
+</div>
+
+<div class="question">
+  <strong>Q5: Can we change the value of a String?</strong>
+  <div class="answer">
+    No. Cualquier operación que parezca modificar un String
+    en realidad crea un nuevo objeto.
+  </div>
+</div>
+
+<div class="question">
+  <strong>Q6: Why String is safe to use as a HashMap key?</strong>
+  <div class="answer">
+    Porque es inmutable, lo que garantiza que su hashCode
+    no cambie después de ser insertado.
+  </div>
+</div>
+
+<h2>String vs StringBuilder vs StringBuffer</h2>
+
+<ul>
+  <li><strong>String</strong> → inmutable</li>
+  <li><strong>StringBuilder</strong> → mutable, no thread-safe</li>
+  <li><strong>StringBuffer</strong> → mutable, thread-safe</li>
+</ul>
+
+<h2>Summary</h2>
+
+<p>
+  Comprender la inmutabilidad de String y el funcionamiento del String Pool
+  es esencial para escribir código eficiente en Java y para superar
+  entrevistas técnicas de nivel medio y avanzado.
+</p>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conceptos Básicos: DynamoDB y Spring</title>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3 {
+      color: #222;
+    }
+
+    h1 {
+      text-align: center;
+      border-bottom: 3px solid #ddd;
+      padding-bottom: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+      background-color: #fff;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    pre {
+      background: #f4f4f4;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    code {
+      color: #c7254e;
+      background-color: #f9f2f4;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    ul {
+      margin-left: 1.5rem;
+    }
+
+    .question {
+      background: #f4f4f4;
+      border-left: 4px solid #888;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .answer {
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Conceptos Básicos: DynamoDB y Spring</h1>
+
+<section>
+  <h2>1. ¿Qué es DynamoDB?</h2>
+
+  <p>
+    <strong>Amazon DynamoDB</strong> es una base de datos <strong>NoSQL</strong>,
+    completamente administrada, de tipo <em>key-value</em> y <em>document</em>,
+    diseñada para ofrecer <strong>alta disponibilidad</strong>,
+    <strong>baja latencia</strong> y <strong>escalabilidad automática</strong>.
+  </p>
+
+  <ul>
+    <li>Serverless (no se administran servidores)</li>
+    <li>Escala automáticamente</li>
+    <li>Alta durabilidad y replicación multi-AZ</li>
+    <li>Modelo de pago por uso</li>
+  </ul>
+</section>
+
+<section>
+  <h2>2. Modelo de Datos en DynamoDB</h2>
+
+  <h3>Tablas</h3>
+  <p>
+    DynamoDB almacena los datos en <strong>tablas</strong>, pero a diferencia
+    de las bases de datos relacionales, no hay esquemas rígidos.
+  </p>
+
+  <h3>Primary Key</h3>
+  <ul>
+    <li><strong>Partition Key</strong> → distribuye los datos</li>
+    <li><strong>Sort Key</strong> (opcional) → ordena dentro de la partición</li>
+  </ul>
+
+  <pre><code>
+Partition Key: userId
+Sort Key: orderDate
+</code></pre>
+
+  <p>
+    La correcta elección de la clave primaria es crítica para el rendimiento.
+  </p>
+</section>
+
+<section>
+  <h2>3. Acceso a Datos y Consultas</h2>
+
+  <ul>
+    <li><strong>GetItem</strong> → acceso por clave primaria</li>
+    <li><strong>Query</strong> → consulta por partition + sort key</li>
+    <li><strong>Scan</strong> → recorre toda la tabla (costoso)</li>
+  </ul>
+
+  <p>
+    ❌ Evitar <code>Scan</code> en producción  
+    ✔ Diseñar el modelo según los patrones de acceso
+  </p>
+</section>
+
+<section>
+  <h2>4. Uso de DynamoDB con Java</h2>
+
+  <h3>Dependencia Maven</h3>
+
+  <pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;software.amazon.awssdk&lt;/groupId&gt;
+  &lt;artifactId&gt;dynamodb&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+
+  <h3>Cliente DynamoDB</h3>
+
+  <pre><code>DynamoDbClient dynamoDb = DynamoDbClient.builder()
+  .region(Region.US_EAST_1)
+  .build();
+</code></pre>
+
+  <h3>Insertar un Item</h3>
+
+  <pre><code>Map&lt;String, AttributeValue&gt; item = Map.of(
+  "userId", AttributeValue.fromS("123"),
+  "name", AttributeValue.fromS("Carlos")
+);
+
+dynamoDb.putItem(builder ->
+  builder.tableName("Users").item(item)
+);
+</code></pre>
+</section>
+
+<section>
+  <h2>5. DynamoDB + Spring Boot</h2>
+
+  <p>
+    En aplicaciones Spring Boot, DynamoDB se integra comúnmente
+    usando el SDK de AWS y beans de configuración.
+  </p>
+
+  <h3>Configuración del Cliente</h3>
+
+  <pre><code>@Configuration
+public class DynamoConfig {
+
+  @Bean
+  public DynamoDbClient dynamoDbClient() {
+    return DynamoDbClient.builder()
+      .region(Region.US_EAST_1)
+      .build();
+  }
+}</code></pre>
+
+  <h3>Entidad DynamoDB</h3>
+
+  <pre><code>@DynamoDbBean
+public class User {
+
+  private String userId;
+  private String name;
+
+  @DynamoDbPartitionKey
+  public String getUserId() {
+    return userId;
+  }
+}</code></pre>
+
+  <h3>Enhanced Client</h3>
+
+  <pre><code>DynamoDbEnhancedClient enhancedClient =
+  DynamoDbEnhancedClient.builder()
+    .dynamoDbClient(dynamoDbClient)
+    .build();
+
+DynamoDbTable&lt;User&gt; table =
+  enhancedClient.table("Users",
+    TableSchema.fromBean(User.class));
+</code></pre>
+</section>
+
+<section>
+  <h2>6. Buenas Prácticas</h2>
+
+  <ul>
+    <li>Diseñar primero los patrones de acceso</li>
+    <li>Evitar scans</li>
+    <li>Usar índices secundarios (GSI) solo cuando sea necesario</li>
+    <li>Manejar correctamente la capacidad y throttling</li>
+    <li>Preferir operaciones idempotentes</li>
+  </ul>
+</section>
+
+<section>
+  <h2>7. Preguntas Comunes de Entrevista</h2>
+
+  <div class="question">
+    <strong>Q1: ¿DynamoDB es SQL o NoSQL?</strong>
+    <div class="answer">
+      Es una base de datos NoSQL, orientada a key-value y documentos.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q2: ¿Cuál es la diferencia entre Query y Scan?</strong>
+    <div class="answer">
+      Query usa claves y es eficiente; Scan recorre toda la tabla y es costoso.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q3: ¿Qué es una Partition Key?</strong>
+    <div class="answer">
+      Es el atributo usado para distribuir los datos internamente
+      y escalar la tabla.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q4: ¿Cuándo usar DynamoDB en lugar de una base relacional?</strong>
+    <div class="answer">
+      Cuando se necesita alta escalabilidad, baja latencia
+      y patrones de acceso bien definidos.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q5: ¿Cómo se integra DynamoDB con Spring?</strong>
+    <div class="answer">
+      Mediante el AWS SDK, configuración de beans y el DynamoDB Enhanced Client.
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>8. Summary</h2>
+
+  <p>
+    DynamoDB es una base de datos altamente escalable y de alto rendimiento,
+    ideal para arquitecturas serverless y microservicios. Usada con Spring Boot,
+    permite construir aplicaciones robustas, desacopladas y listas para producción
+    en la nube.
+  </p>
+</section>
+
+</body>
+</html>

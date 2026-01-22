@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error Handling & Reliability in Java and Spring</title>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3 {
+      color: #222;
+    }
+
+    h1 {
+      text-align: center;
+      border-bottom: 3px solid #ddd;
+      padding-bottom: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+      background-color: #fff;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    pre {
+      background: #f4f4f4;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    code {
+      color: #c7254e;
+      background-color: #f9f2f4;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    ul {
+      margin-left: 1.5rem;
+    }
+
+    .question {
+      background: #f4f4f4;
+      border-left: 4px solid #888;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .answer {
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Error Handling & Reliability in Java</h1>
+
+<section>
+  <h2>1. Java Error Handling (Java-specific mechanisms)</h2>
+
+  <p>
+    Java maneja errores y situaciones excepcionales mediante el uso de
+    <strong>excepciones</strong>. Estas permiten separar la lógica normal
+    del flujo de error.
+  </p>
+
+  <h3>Exception Hierarchy</h3>
+
+  <ul>
+    <li><strong>Error</strong>: problemas graves del JVM (OutOfMemoryError)</li>
+    <li><strong>Exception</strong>: situaciones recuperables</li>
+    <li><strong>Checked Exceptions</strong>: deben declararse o manejarse</li>
+    <li><strong>Unchecked Exceptions</strong>: errores de programación</li>
+  </ul>
+
+  <pre><code>try {
+  Files.readAllLines(Path.of("file.txt"));
+} catch (IOException e) {
+  log.error("Error reading file", e);
+}</code></pre>
+
+  <p>
+    ✔ Checked → fallos esperables (I/O, red)  
+    ✔ Unchecked → bugs o violaciones de contrato
+  </p>
+</section>
+
+<section>
+  <h2>2. Reliability-Focused Error Handling</h2>
+
+  <p>
+    En sistemas distribuidos, manejar errores no es suficiente:
+    hay que diseñar para <strong>fallar de forma controlada</strong>.
+  </p>
+
+  <h3>Retry Strategies</h3>
+
+  <p>
+    Los reintentos se usan cuando el fallo es <em>transitorio</em>
+    (timeouts, fallos de red).
+  </p>
+
+  <ul>
+    <li>Fixed retry</li>
+    <li>Exponential backoff</li>
+    <li>Retry with jitter</li>
+  </ul>
+
+  <pre><code>int attempts = 0;
+while (attempts < 3) {
+  try {
+    callRemoteService();
+    break;
+  } catch (TimeoutException e) {
+    attempts++;
+  }
+}</code></pre>
+
+  <p>
+    ❌ No usar retries en errores lógicos  
+    ✔ Siempre limitar el número de intentos
+  </p>
+</section>
+
+<section>
+  <h2>3. Recovery Mechanisms</h2>
+
+  <p>
+    Un <strong>recovery mechanism</strong> define qué hacer cuando
+    todos los retries fallan.
+  </p>
+
+  <h3>Tipos comunes</h3>
+
+  <ul>
+    <li>Fallbacks (datos por defecto)</li>
+    <li>Graceful degradation</li>
+    <li>Circuit breakers</li>
+    <li>Dead Letter Queues</li>
+  </ul>
+
+  <pre><code>public String getUserName(String id) {
+  try {
+    return remoteService.getUser(id);
+  } catch (Exception e) {
+    return "Guest";
+  }
+}</code></pre>
+
+  <p>
+    ✔ El sistema sigue funcionando  
+    ✔ El error no se propaga sin control
+  </p>
+</section>
+
+<section>
+  <h2>4. Best Practices in Exception Propagation</h2>
+
+  <ul>
+    <li>No atrapar excepciones que no puedes manejar</li>
+    <li>No usar <code>catch(Exception)</code> sin razón</li>
+    <li>Preservar el stack trace</li>
+    <li>Traducir excepciones entre capas</li>
+  </ul>
+
+  <pre><code>throw new BusinessException("Invalid order", e);</code></pre>
+
+  <p>
+    Cada capa debe lanzar excepciones con significado
+    para la capa superior.
+  </p>
+</section>
+
+<section>
+  <h2>5. Error Handling in Spring / Spring Boot</h2>
+
+  <p>
+    Spring proporciona mecanismos declarativos y centralizados
+    para manejar errores de forma consistente.
+  </p>
+
+  <h3>@ExceptionHandler</h3>
+
+  <pre><code>@ExceptionHandler(EntityNotFoundException.class)
+public ResponseEntity&lt;String&gt; handleNotFound(Exception ex) {
+  return ResponseEntity.status(404).body(ex.getMessage());
+}</code></pre>
+
+  <h3>@ControllerAdvice (Global Handling)</h3>
+
+  <pre><code>@ControllerAdvice
+public class GlobalExceptionHandler {
+
+  @ExceptionHandler(BusinessException.class)
+  public ResponseEntity&lt;ErrorResponse&gt; handleBusiness(
+      BusinessException ex) {
+
+    return ResponseEntity
+      .badRequest()
+      .body(new ErrorResponse(ex.getMessage()));
+  }
+}</code></pre>
+
+  <h3>Spring Retry</h3>
+
+  <pre><code>@Retryable(
+  value = TimeoutException.class,
+  maxAttempts = 3,
+  backoff = @Backoff(delay = 1000)
+)
+public void callService() {
+  remoteCall();
+}</code></pre>
+
+  <pre><code>@Recover
+public void recover(TimeoutException e) {
+  log.error("Fallback after retries", e);
+}</code></pre>
+</section>
+
+<section>
+  <h2>6. Common Interview Questions</h2>
+
+  <div class="question">
+    <strong>Q1: Difference between checked and unchecked exceptions?</strong>
+    <div class="answer">
+      Checked exceptions representan fallos esperables y deben manejarse.
+      Unchecked indican errores de programación.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q2: When should you use retry?</strong>
+    <div class="answer">
+      Solo para errores transitorios como timeouts o problemas de red,
+      nunca para errores de negocio.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q3: What is exception translation?</strong>
+    <div class="answer">
+      Convertir excepciones técnicas en excepciones de negocio
+      al cruzar capas de la aplicación.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q4: How does Spring handle exceptions globally?</strong>
+    <div class="answer">
+      Usando @ControllerAdvice y @ExceptionHandler para centralizar
+      la lógica de error.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q5: Why not catch Exception everywhere?</strong>
+    <div class="answer">
+      Porque oculta errores reales, rompe el flujo de propagación
+      y dificulta el debugging.
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>7. Summary</h2>
+
+  <p>
+    Un buen manejo de errores en Java no solo consiste en capturar excepciones,
+    sino en diseñar sistemas resilientes. Combinando excepciones bien definidas,
+    retries controlados, mecanismos de recuperación y manejo centralizado en Spring,
+    se construyen aplicaciones robustas y mantenibles.
+  </p>
+</section>
+
+</body>
+</html>

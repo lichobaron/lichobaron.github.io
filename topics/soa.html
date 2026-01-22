@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Service-Oriented Architecture (SOA)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../styles/main.css" />
+</head>
+<body>
+
+  <main class="content">
+    <h1>Service-Oriented Architecture (SOA)</h1>
+
+    <p>
+      <strong>Service-Oriented Architecture (SOA)</strong> es un estilo de arquitectura
+      de software donde las funcionalidades del sistema se organizan como
+      <em>servicios independientes</em> que se comunican entre sí a través de
+      interfaces bien definidas.
+    </p>
+
+    <h2>What is a Service?</h2>
+    <p>
+      Un servicio es una unidad autónoma de lógica de negocio que:
+    </p>
+    <ul>
+      <li>Expone una interfaz clara (API o contrato)</li>
+      <li>No depende del estado interno de otros servicios</li>
+      <li>Puede ser reutilizado por múltiples aplicaciones</li>
+    </ul>
+
+    <h2>Core Principles of SOA</h2>
+    <ul>
+      <li><strong>Loose Coupling:</strong> los servicios tienen dependencias mínimas</li>
+      <li><strong>Reusability:</strong> un servicio puede ser usado en distintos contextos</li>
+      <li><strong>Interoperability:</strong> comunicación vía estándares (HTTP, XML, JSON)</li>
+      <li><strong>Autonomy:</strong> cada servicio controla su propia lógica y datos</li>
+      <li><strong>Discoverability:</strong> los servicios pueden ser registrados y descubiertos</li>
+    </ul>
+
+    <h2>SOA Architecture Overview</h2>
+        <p>
+      En una arquitectura SOA típica, los clientes no acceden directamente a la lógica
+      de negocio. En su lugar, consumen servicios a través de contratos bien definidos.
+    </p>
+
+    <h2>Typical SOA Components</h2>
+    <ul>
+      <li><strong>Service Provider:</strong> implementa y expone el servicio</li>
+      <li><strong>Service Consumer:</strong> aplicación que consume el servicio</li>
+      <li><strong>Service Contract:</strong> define cómo se usa el servicio</li>
+      <li><strong>Enterprise Service Bus (ESB):</strong> orquesta y enruta mensajes</li>
+    </ul>
+
+    <h2>SOA vs Monolithic Architecture</h2>
+    <p>
+      A diferencia de una arquitectura monolítica, SOA separa responsabilidades
+      en servicios independientes, lo que mejora la escalabilidad y el mantenimiento,
+      pero añade complejidad operacional.
+    </p>
+
+    <h2>SOA vs Microservices</h2>
+    <p>
+      SOA es un precursor de los microservicios. Aunque comparten ideas, SOA suele:
+    </p>
+    <ul>
+      <li>Usar un ESB centralizado</li>
+      <li>Tener servicios más grandes</li>
+      <li>Estar orientado a integración empresarial</li>
+    </ul>
+
+    <h2>When to Use SOA</h2>
+    <p>
+      SOA es especialmente útil cuando:
+    </p>
+    <ul>
+      <li>Existen múltiples sistemas que deben integrarse</li>
+      <li>Se requiere reutilización de lógica de negocio</li>
+      <li>La organización trabaja con sistemas legacy</li>
+    </ul>
+
+    <h2>Summary</h2>
+    <p>
+      SOA permite construir sistemas distribuidos, flexibles y reutilizables,
+      facilitando la integración entre aplicaciones heterogéneas dentro de
+      entornos empresariales complejos.
+    </p>
+  </main>
+
+</body>
+</html>

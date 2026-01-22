@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Java Functional Programming</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3 {
+      color: #222;
+    }
+
+    h1 {
+      text-align: center;
+      border-bottom: 3px solid #ddd;
+      padding-bottom: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    section {
+      margin-bottom: 2.5rem;
+      background-color: #fff;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    pre {
+      background: #f4f4f4;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    code {
+      color: #c7254e;
+      background-color: #f9f2f4;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    ul {
+      margin-left: 1.5rem;
+    }
+
+    .question {
+      background: #f4f4f4;
+      border-left: 4px solid #888;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      border-radius: 6px;
+    }
+
+    .answer {
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Java Functional Programming</h1>
+
+<section>
+  <h2>1. What is Functional Programming in Java?</h2>
+
+  <p>
+    El <strong>Functional Programming</strong> es un paradigma que trata la computación
+    como la evaluación de funciones, evitando el estado mutable y los efectos secundarios.
+  </p>
+
+  <p>
+    Desde <strong>Java 8</strong>, Java soporta este paradigma mediante:
+  </p>
+
+  <ul>
+    <li>Lambdas</li>
+    <li>Functional Interfaces</li>
+    <li>Streams API</li>
+    <li>Optional</li>
+  </ul>
+</section>
+
+<section>
+  <h2>2. Functional Interfaces</h2>
+
+  <p>
+    Una <strong>Functional Interface</strong> es una interfaz con
+    <em>exactamente un método abstracto</em>.
+  </p>
+
+  <pre><code>@FunctionalInterface
+public interface Calculator {
+  int calculate(int a, int b);
+}</code></pre>
+
+  <p>
+    Puede ser implementada usando una lambda:
+  </p>
+
+  <pre><code>Calculator sum = (a, b) -> a + b;</code></pre>
+</section>
+
+<section>
+  <h2>3. Why Create Custom Functional Interfaces?</h2>
+
+  <h3>1️⃣ Domain-specific behavior</h3>
+  <p>
+    Las interfaces estándar (<code>Function</code>, <code>Predicate</code>, etc.)
+    no siempre expresan claramente la intención del negocio.
+  </p>
+
+  <pre><code>@FunctionalInterface
+public interface PriceCalculator {
+  BigDecimal applyDiscount(BigDecimal price);
+}</code></pre>
+
+  <h3>2️⃣ Readability & Expressiveness</h3>
+  <p>
+    El código se vuelve más legible y autoexplicativo.
+  </p>
+
+  <pre><code>processOrder(price, discountCalculator);</code></pre>
+
+  <h3>3️⃣ Checked Exceptions</h3>
+  <p>
+    Las interfaces funcionales estándar no permiten checked exceptions.
+  </p>
+
+  <pre><code>@FunctionalInterface
+public interface FileProcessor {
+  String process(Path path) throws IOException;
+}</code></pre>
+
+  <h3>4️⃣ Reusability & Testing</h3>
+  <p>
+    Facilitan la inyección de comportamiento y el testing unitario.
+  </p>
+</section>
+
+<section>
+  <h2>4. Practical Functional Programming Examples</h2>
+
+  <h3>Example 1: Filtering and Mapping with Streams</h3>
+
+  <pre><code>List&lt;String&gt; names = List.of("Ana", "Carlos", "Bob");
+
+List&lt;String&gt; result = names.stream()
+  .filter(name -> name.length() &gt; 3)
+  .map(String::toUpperCase)
+  .toList();</code></pre>
+
+  <h3>Example 2: Behavior Parameterization</h3>
+
+  <pre><code>public void process(List&lt;Integer&gt; list, Predicate&lt;Integer&gt; rule) {
+  list.stream()
+      .filter(rule)
+      .forEach(System.out::println);
+}</code></pre>
+
+  <pre><code>process(numbers, n -> n % 2 == 0);</code></pre>
+
+  <h3>Example 3: Strategy Pattern (Functional Style)</h3>
+
+  <pre><code>Map&lt;String, Function&lt;Integer, Integer&gt;&gt; operations = Map.of(
+  "double", x -> x * 2,
+  "square", x -> x * x
+);
+
+operations.get("double").apply(5);</code></pre>
+
+  <h3>Example 4: Optional to Avoid Null Checks</h3>
+
+  <pre><code>Optional&lt;User&gt; user = findUser();
+
+user.map(User::getEmail)
+    .ifPresent(System.out::println);</code></pre>
+
+  <h3>Example 5: Immutable Transformations</h3>
+
+  <pre><code>List&lt;Integer&gt; doubled =
+  numbers.stream()
+         .map(n -> n * 2)
+         .toList();</code></pre>
+</section>
+
+<section>
+  <h2>5. Common Interview Questions</h2>
+
+  <div class="question">
+    <strong>Q1: Why use functional programming in Java?</strong>
+    <div class="answer">
+      Mejora la legibilidad, reduce el código boilerplate,
+      facilita la concurrencia y promueve código más declarativo.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q2: Why create custom functional interfaces?</strong>
+    <div class="answer">
+      Para expresar mejor reglas de negocio, soportar checked exceptions
+      y mejorar la claridad del código.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q3: Difference between Function and Predicate?</strong>
+    <div class="answer">
+      Function transforma un valor y retorna otro.
+      Predicate evalúa una condición y retorna boolean.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q4: Are lambdas thread-safe?</strong>
+    <div class="answer">
+      Sí, siempre que no accedan a estado mutable compartido.
+    </div>
+  </div>
+
+  <div class="question">
+    <strong>Q5: Can a functional interface have default methods?</strong>
+    <div class="answer">
+      Sí, siempre que tenga un solo método abstracto.
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>6. Summary</h2>
+
+  <p>
+    Java Functional Programming permite escribir código más limpio,
+    modular y expresivo. Crear interfaces funcionales personalizadas
+    es una herramienta poderosa para modelar reglas de negocio y
+    aplicar patrones de diseño de forma moderna.
+  </p>
+</section>
+
+</body>
+</html>

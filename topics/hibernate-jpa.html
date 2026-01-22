@@ -227,6 +227,143 @@ public void actualizarUsuario(Long id) {
       <li>Definir correctamente equals() y hashCode() en entidades basadas en el identificador.</li>
     </ul>
   </section>
+  <section>
+  <h2>8. Optimistic vs Pessimistic Locking en JPA / Hibernate</h2>
+
+  <p>
+    El <strong>locking</strong> es un mecanismo utilizado para controlar el acceso concurrente
+    a los datos y evitar problemas como <em>lost updates</em>, lecturas inconsistentes
+    o corrupción de datos cuando múltiples transacciones acceden a la misma entidad.
+  </p>
+
+  <h3>Optimistic Locking</h3>
+
+  <p>
+    El <strong>Optimistic Locking</strong> asume que los conflictos son poco frecuentes.
+    No bloquea registros en la base de datos; en su lugar, detecta conflictos
+    <em>al momento de hacer commit</em>.
+  </p>
+
+  <h4>¿Cómo funciona?</h4>
+  <ul>
+    <li>Se agrega un campo de versión a la entidad</li>
+    <li>Hibernate compara la versión antes de actualizar</li>
+    <li>Si la versión cambió, se lanza una excepción</li>
+  </ul>
+
+  <h4>Configuración con <code>@Version</code></h4>
+
+  <pre><code>@Entity
+public class Usuario {
+
+  @Id
+  @GeneratedValue
+  private Long id;
+
+  private String nombre;
+
+  @Version
+  private Integer version;
+}</code></pre>
+
+  <p>
+    Si dos transacciones intentan modificar el mismo registro:
+  </p>
+
+  <ul>
+    <li>La primera transacción se confirma correctamente</li>
+    <li>La segunda lanza <code>OptimisticLockException</code></li>
+  </ul>
+
+  <p>
+    ✔ Ideal para sistemas con muchas lecturas y pocas escrituras  
+    ✔ Mejor rendimiento  
+    ✖ No previene conflictos, solo los detecta
+  </p>
+
+  <hr/>
+
+  <h3>Pessimistic Locking</h3>
+
+  <p>
+    El <strong>Pessimistic Locking</strong> asume que los conflictos son frecuentes.
+    Bloquea explícitamente los registros en la base de datos para evitar que
+    otras transacciones los modifiquen o lean.
+  </p>
+
+  <h4>Tipos de Pessimistic Locking</h4>
+  <ul>
+    <li><code>PESSIMISTIC_READ</code> → otros pueden leer, no escribir</li>
+    <li><code>PESSIMISTIC_WRITE</code> → nadie más puede leer ni escribir</li>
+  </ul>
+
+  <h4>Uso con JPA</h4>
+
+  <pre><code>Usuario u = entityManager.find(
+  Usuario.class,
+  id,
+  LockModeType.PESSIMISTIC_WRITE
+);</code></pre>
+
+  <h4>Uso con Query</h4>
+
+  <pre><code>Usuario u = entityManager
+  .createQuery("SELECT u FROM Usuario u WHERE u.id = :id", Usuario.class)
+  .setParameter("id", id)
+  .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+  .getSingleResult();</code></pre>
+
+  <p>
+    ✔ Previene conflictos de forma inmediata  
+    ✔ Útil en operaciones críticas (finanzas, inventarios)  
+    ✖ Reduce concurrencia  
+    ✖ Puede generar deadlocks
+  </p>
+
+  <hr/>
+
+  <h3>Optimistic vs Pessimistic Locking</h3>
+
+  <table border="1" cellpadding="8" cellspacing="0"
+         style="border-collapse: collapse; width:100%; text-align:left;">
+    <tr>
+      <th>Aspecto</th>
+      <th>Optimistic Locking</th>
+      <th>Pessimistic Locking</th>
+    </tr>
+    <tr>
+      <td>Bloqueo en BD</td>
+      <td>No</td>
+      <td>Sí</td>
+    </tr>
+    <tr>
+      <td>Detección de conflicto</td>
+      <td>En commit</td>
+      <td>Antes de modificar</td>
+    </tr>
+    <tr>
+      <td>Rendimiento</td>
+      <td>Alto</td>
+      <td>Menor</td>
+    </tr>
+    <tr>
+      <td>Uso recomendado</td>
+      <td>Alta concurrencia de lectura</td>
+      <td>Datos críticos</td>
+    </tr>
+  </table>
+
+  <h3>Buenas Prácticas</h3>
+
+  <ul>
+    <li>Usar <strong>Optimistic Locking</strong> por defecto</li>
+    <li>Agregar <code>@Version</code> en entidades críticas</li>
+    <li>Usar <strong>Pessimistic Locking</strong> solo cuando sea necesario</li>
+    <li>Manejar explícitamente <code>OptimisticLockException</code></li>
+    <li>Evitar transacciones largas con locks pesimistas</li>
+  </ul>
+
+</section>
 
 </body>
 </html>
